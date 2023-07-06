@@ -8,22 +8,6 @@
           "build/netstandard1.0/coverlet.collector.targets": {}
         }
       },
-      "FluentAssertions/6.10.0": {
-        "type": "package",
-        "dependencies": {
-          "System.Configuration.ConfigurationManager": "4.4.0"
-        },
-        "compile": {
-          "lib/net6.0/FluentAssertions.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/net6.0/FluentAssertions.dll": {
-            "related": ".pdb;.xml"
-          }
-        }
-      },
       "Microsoft.Bcl.AsyncInterfaces/7.0.0": {
         "type": "package",
         "compile": {
@@ -79,7 +63,7 @@
           "lib/netstandard1.0/_._": {}
         }
       },
-      "Microsoft.Playwright/1.32.0": {
+      "Microsoft.Playwright/1.35.0": {
         "type": "package",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "7.0.0",
@@ -100,12 +84,12 @@
           "buildTransitive/Microsoft.Playwright.targets": {}
         }
       },
-      "Microsoft.Playwright.NUnit/1.32.0": {
+      "Microsoft.Playwright.NUnit/1.35.0": {
         "type": "package",
         "dependencies": {
           "Microsoft.NET.Test.Sdk": "16.11.0",
-          "Microsoft.Playwright": "1.32.0",
-          "Microsoft.Playwright.TestAdapter": "1.32.0",
+          "Microsoft.Playwright": "1.35.0",
+          "Microsoft.Playwright.TestAdapter": "1.35.0",
           "NUnit": "3.13.2",
           "NUnit3TestAdapter": "4.0.0"
         },
@@ -116,10 +100,10 @@
           "lib/netstandard2.0/Microsoft.Playwright.NUnit.dll": {}
         }
       },
-      "Microsoft.Playwright.TestAdapter/1.32.0": {
+      "Microsoft.Playwright.TestAdapter/1.35.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Playwright": "1.32.0",
+          "Microsoft.Playwright": "1.35.0",
           "Microsoft.TestPlatform.ObjectModel": "17.3.0"
         },
         "compile": {
@@ -420,7 +404,7 @@
           }
         }
       },
-      "NUnit/3.13.2": {
+      "NUnit/3.13.3": {
         "type": "package",
         "dependencies": {
           "NETStandard.Library": "2.0.0"
@@ -438,6 +422,9 @@
         "build": {
           "build/NUnit.props": {}
         }
+      },
+      "NUnit.Analyzers/3.6.1": {
+        "type": "package"
       },
       "NUnit3TestAdapter/4.4.2": {
         "type": "package",
@@ -458,20 +445,6 @@
           }
         }
       },
-      "System.Configuration.ConfigurationManager/4.4.0": {
-        "type": "package",
-        "dependencies": {
-          "System.Security.Cryptography.ProtectedData": "4.4.0"
-        },
-        "compile": {
-          "ref/netstandard2.0/System.Configuration.ConfigurationManager.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/System.Configuration.ConfigurationManager.dll": {}
-        }
-      },
       "System.Reflection.Metadata/1.6.0": {
         "type": "package",
         "compile": {
@@ -482,23 +455,6 @@
         "runtime": {
           "lib/netstandard2.0/System.Reflection.Metadata.dll": {
             "related": ".xml"
-          }
-        }
-      },
-      "System.Security.Cryptography.ProtectedData/4.4.0": {
-        "type": "package",
-        "compile": {
-          "ref/netstandard2.0/_._": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll": {}
-        },
-        "runtimeTargets": {
-          "runtimes/win/lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll": {
-            "assetType": "runtime",
-            "rid": "win"
           }
         }
       },
@@ -597,36 +553,6 @@
         "coverlet-icon.png",
         "coverlet.collector.3.2.0.nupkg.sha512",
         "coverlet.collector.nuspec"
-      ]
-    },
-    "FluentAssertions/6.10.0": {
-      "sha512": "Da3YsiRDnOHKBfxutjnupL1rOX0K/jnG6crn5AgwukeqZ/yi+HNCOFshic01ke0ztZFWzpfQMXH8fO9aAbG0Gw==",
-      "type": "package",
-      "path": "fluentassertions/6.10.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "FluentAssertions.png",
-        "fluentassertions.6.10.0.nupkg.sha512",
-        "fluentassertions.nuspec",
-        "lib/net47/FluentAssertions.dll",
-        "lib/net47/FluentAssertions.pdb",
-        "lib/net47/FluentAssertions.xml",
-        "lib/net6.0/FluentAssertions.dll",
-        "lib/net6.0/FluentAssertions.pdb",
-        "lib/net6.0/FluentAssertions.xml",
-        "lib/netcoreapp2.1/FluentAssertions.dll",
-        "lib/netcoreapp2.1/FluentAssertions.pdb",
-        "lib/netcoreapp2.1/FluentAssertions.xml",
-        "lib/netcoreapp3.0/FluentAssertions.dll",
-        "lib/netcoreapp3.0/FluentAssertions.pdb",
-        "lib/netcoreapp3.0/FluentAssertions.xml",
-        "lib/netstandard2.0/FluentAssertions.dll",
-        "lib/netstandard2.0/FluentAssertions.pdb",
-        "lib/netstandard2.0/FluentAssertions.xml",
-        "lib/netstandard2.1/FluentAssertions.dll",
-        "lib/netstandard2.1/FluentAssertions.pdb",
-        "lib/netstandard2.1/FluentAssertions.xml"
       ]
     },
     "Microsoft.Bcl.AsyncInterfaces/7.0.0": {
@@ -755,10 +681,10 @@
         "runtime.json"
       ]
     },
-    "Microsoft.Playwright/1.32.0": {
-      "sha512": "wqK1x8usn8bJOWLlX9HPI3sdQA/DzSW9IFBBC7uvD/cD4JKlPv8tN/ubCia+O1JDy11cOQytRUNa4vyZ6/uK7Q==",
+    "Microsoft.Playwright/1.35.0": {
+      "sha512": "0AFDebTHdLvgPp2Z3OruJZnl5bSJR/SCYnw/PBa7B5uT08U3T1uAVcq9V8UeubkMp8d2e5b4uf9HLK6bCeipsA==",
       "type": "package",
-      "path": "microsoft.playwright/1.32.0",
+      "path": "microsoft.playwright/1.35.0",
       "files": [
         ".nupkg.metadata",
         ".playwright/node/LICENSE",
@@ -802,6 +728,7 @@
         ".playwright/package/lib/browserServerImpl.js",
         ".playwright/package/lib/cli/cli.js",
         ".playwright/package/lib/cli/driver.js",
+        ".playwright/package/lib/cli/program.js",
         ".playwright/package/lib/client/accessibility.js",
         ".playwright/package/lib/client/android.js",
         ".playwright/package/lib/client/api.js",
@@ -958,6 +885,7 @@
         ".playwright/package/lib/server/recorder/csharp.js",
         ".playwright/package/lib/server/recorder/java.js",
         ".playwright/package/lib/server/recorder/javascript.js",
+        ".playwright/package/lib/server/recorder/jsonl.js",
         ".playwright/package/lib/server/recorder/language.js",
         ".playwright/package/lib/server/recorder/python.js",
         ".playwright/package/lib/server/recorder/recorderActions.js",
@@ -1034,11 +962,11 @@
         ".playwright/package/lib/utilsBundle.js",
         ".playwright/package/lib/utilsBundleImpl.js",
         ".playwright/package/lib/webpack/htmlReport/index.html",
+        ".playwright/package/lib/webpack/recorder/assets/codeMirrorModule-3d62f429.js",
         ".playwright/package/lib/webpack/recorder/assets/codeMirrorModule-5d0f417c.css",
-        ".playwright/package/lib/webpack/recorder/assets/codeMirrorModule-7cdf3090.js",
         ".playwright/package/lib/webpack/recorder/assets/codicon-dcd00fb4.ttf",
-        ".playwright/package/lib/webpack/recorder/assets/index-26e56fd7.css",
-        ".playwright/package/lib/webpack/recorder/assets/index-aa88d5c3.js",
+        ".playwright/package/lib/webpack/recorder/assets/index-b3093ed5.js",
+        ".playwright/package/lib/webpack/recorder/assets/index-b7e6bd86.css",
         ".playwright/package/lib/webpack/recorder/icon-16x16.png",
         ".playwright/package/lib/webpack/recorder/icon-192x192.png",
         ".playwright/package/lib/webpack/recorder/icon-256x256.png",
@@ -1046,9 +974,9 @@
         ".playwright/package/lib/webpack/recorder/icon-384x384.png",
         ".playwright/package/lib/webpack/recorder/icon-512x512.png",
         ".playwright/package/lib/webpack/recorder/index.html",
-        ".playwright/package/lib/webpack/traceViewer/assets/codeMirrorModule-3678cec2.js",
-        ".playwright/package/lib/webpack/traceViewer/assets/workbench-b198d476.js",
-        ".playwright/package/lib/webpack/traceViewer/assets/xtermModule-0fb1e5c9.js",
+        ".playwright/package/lib/webpack/traceViewer/assets/codeMirrorModule-005ecef1.js",
+        ".playwright/package/lib/webpack/traceViewer/assets/wsPort-23488fec.js",
+        ".playwright/package/lib/webpack/traceViewer/assets/xtermModule-443332e6.js",
         ".playwright/package/lib/webpack/traceViewer/codeMirrorModule.5d0f417c.css",
         ".playwright/package/lib/webpack/traceViewer/codicon.dcd00fb4.ttf",
         ".playwright/package/lib/webpack/traceViewer/icon-16x16.png",
@@ -1057,14 +985,14 @@
         ".playwright/package/lib/webpack/traceViewer/icon-32x32.png",
         ".playwright/package/lib/webpack/traceViewer/icon-384x384.png",
         ".playwright/package/lib/webpack/traceViewer/icon-512x512.png",
-        ".playwright/package/lib/webpack/traceViewer/index.a18c30b0.js",
+        ".playwright/package/lib/webpack/traceViewer/index.85329f14.js",
         ".playwright/package/lib/webpack/traceViewer/index.html",
         ".playwright/package/lib/webpack/traceViewer/popout.html",
         ".playwright/package/lib/webpack/traceViewer/sw.bundle.js",
-        ".playwright/package/lib/webpack/traceViewer/watch.2eaed85c.css",
-        ".playwright/package/lib/webpack/traceViewer/watch.575ca3b3.js",
-        ".playwright/package/lib/webpack/traceViewer/watch.html",
-        ".playwright/package/lib/webpack/traceViewer/workbench.abfdb308.css",
+        ".playwright/package/lib/webpack/traceViewer/uiMode.8b34c49e.js",
+        ".playwright/package/lib/webpack/traceViewer/uiMode.922a7b48.css",
+        ".playwright/package/lib/webpack/traceViewer/uiMode.html",
+        ".playwright/package/lib/webpack/traceViewer/wsPort.9e506779.css",
         ".playwright/package/lib/webpack/traceViewer/xtermModule.6428296b.css",
         ".playwright/package/lib/zipBundle.js",
         ".playwright/package/lib/zipBundleImpl.js",
@@ -1081,33 +1009,33 @@
         "icon.png",
         "lib/netstandard2.0/Microsoft.Playwright.dll",
         "lib/netstandard2.0/Microsoft.Playwright.xml",
-        "microsoft.playwright.1.32.0.nupkg.sha512",
+        "microsoft.playwright.1.35.0.nupkg.sha512",
         "microsoft.playwright.nuspec"
       ]
     },
-    "Microsoft.Playwright.NUnit/1.32.0": {
-      "sha512": "ExS3Iyv8rJDSOIqFDMdHYRt+Wrbn67BdNjmAaN6XUItWuS3jX+8PnrxGmLrqmAfY665htkbcVCeYUqf6qpbP4w==",
+    "Microsoft.Playwright.NUnit/1.35.0": {
+      "sha512": "zTNEHNnFvGzMEKLSDGJ8J5mtkXsQIbV14J9aSwikoVUjDUk3Uld3sWzCI6h+07DUf6ttBe3PgUMXFURCSCFJgw==",
       "type": "package",
-      "path": "microsoft.playwright.nunit/1.32.0",
+      "path": "microsoft.playwright.nunit/1.35.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "icon.png",
         "lib/netstandard2.0/Microsoft.Playwright.NUnit.dll",
-        "microsoft.playwright.nunit.1.32.0.nupkg.sha512",
+        "microsoft.playwright.nunit.1.35.0.nupkg.sha512",
         "microsoft.playwright.nunit.nuspec"
       ]
     },
-    "Microsoft.Playwright.TestAdapter/1.32.0": {
-      "sha512": "lYTyzRXgJagH/8jOjlp50YcLOGULpwh2AL4PHOrhh6SjNcM7B4e86SanItI9hXeD155GSOckbqLSvgU1NVNHWA==",
+    "Microsoft.Playwright.TestAdapter/1.35.0": {
+      "sha512": "O35OGGLdoRijw6KIZzg4QdAXuAB6/sp4ctHB1qgc1Kq/3XxJfvKoRYq1itZTDkExpbHGWPLAmUNlCP5tUCZ1tA==",
       "type": "package",
-      "path": "microsoft.playwright.testadapter/1.32.0",
+      "path": "microsoft.playwright.testadapter/1.35.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "icon.png",
         "lib/netstandard2.0/Microsoft.Playwright.TestAdapter.dll",
-        "microsoft.playwright.testadapter.1.32.0.nupkg.sha512",
+        "microsoft.playwright.testadapter.1.35.0.nupkg.sha512",
         "microsoft.playwright.testadapter.nuspec"
       ]
     },
@@ -1456,10 +1384,10 @@
         "nuget.frameworks.nuspec"
       ]
     },
-    "NUnit/3.13.2": {
-      "sha512": "u+fz/lXyR4vlamySNAEMrXvh+GhAQiB6/aVZtU5WjivR5zF26Ui0tfteDtWqT90k9D8y6g8rFKYQC97Z7d195w==",
+    "NUnit/3.13.3": {
+      "sha512": "KNPDpls6EfHwC3+nnA67fh5wpxeLb3VLFAfLxrug6JMYDLHH6InaQIWR7Sc3y75d/9IKzMksH/gi08W7XWbmnQ==",
       "type": "package",
-      "path": "nunit/3.13.2",
+      "path": "nunit/3.13.3",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1476,8 +1404,26 @@
         "lib/net45/nunit.framework.xml",
         "lib/netstandard2.0/nunit.framework.dll",
         "lib/netstandard2.0/nunit.framework.xml",
-        "nunit.3.13.2.nupkg.sha512",
+        "nunit.3.13.3.nupkg.sha512",
         "nunit.nuspec"
+      ]
+    },
+    "NUnit.Analyzers/3.6.1": {
+      "sha512": "RKP9tpKfl3DmRgUDGgh3XM3XzeLMrCXXMZm6vm1nMsObZ6vtQL1L9NrK7+oZh1jWearvNsbMis2+AIOY3NFmow==",
+      "type": "package",
+      "path": "nunit.analyzers/3.6.1",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "analyzers/dotnet/cs/nunit.analyzers.dll",
+        "docs/README.md",
+        "images/nunit_256.png",
+        "license.txt",
+        "nunit.analyzers.3.6.1.nupkg.sha512",
+        "nunit.analyzers.nuspec",
+        "tools/install.ps1",
+        "tools/uninstall.ps1"
       ]
     },
     "NUnit3TestAdapter/4.4.2": {
@@ -1597,27 +1543,6 @@
         "version.txt"
       ]
     },
-    "System.Configuration.ConfigurationManager/4.4.0": {
-      "sha512": "gWwQv/Ug1qWJmHCmN17nAbxJYmQBM/E94QxKLksvUiiKB1Ld3Sc/eK1lgmbSjDFxkQhVuayI/cGFZhpBSodLrg==",
-      "type": "package",
-      "path": "system.configuration.configurationmanager/4.4.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "lib/net461/System.Configuration.ConfigurationManager.dll",
-        "lib/netstandard2.0/System.Configuration.ConfigurationManager.dll",
-        "ref/net461/System.Configuration.ConfigurationManager.dll",
-        "ref/net461/System.Configuration.ConfigurationManager.xml",
-        "ref/netstandard2.0/System.Configuration.ConfigurationManager.dll",
-        "ref/netstandard2.0/System.Configuration.ConfigurationManager.xml",
-        "system.configuration.configurationmanager.4.4.0.nupkg.sha512",
-        "system.configuration.configurationmanager.nuspec",
-        "useSharedDesignerContext.txt",
-        "version.txt"
-      ]
-    },
     "System.Reflection.Metadata/1.6.0": {
       "sha512": "COC1aiAJjCoA5GBF+QKL2uLqEBew4JsCkQmoHKbN3TlOZKa2fKLz5CpiRQKDz0RsAOEGsVKqOD5bomsXq/4STQ==",
       "type": "package",
@@ -1635,47 +1560,6 @@
         "lib/portable-net45+win8/System.Reflection.Metadata.xml",
         "system.reflection.metadata.1.6.0.nupkg.sha512",
         "system.reflection.metadata.nuspec",
-        "useSharedDesignerContext.txt",
-        "version.txt"
-      ]
-    },
-    "System.Security.Cryptography.ProtectedData/4.4.0": {
-      "sha512": "cJV7ScGW7EhatRsjehfvvYVBvtiSMKgN8bOVI0bQhnF5bU7vnHVIsH49Kva7i7GWaWYvmEzkYVk1TC+gZYBEog==",
-      "type": "package",
-      "path": "system.security.cryptography.protecteddata/4.4.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net46/System.Security.Cryptography.ProtectedData.dll",
-        "lib/net461/System.Security.Cryptography.ProtectedData.dll",
-        "lib/netstandard1.3/System.Security.Cryptography.ProtectedData.dll",
-        "lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "lib/xamarintvos10/_._",
-        "lib/xamarinwatchos10/_._",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net46/System.Security.Cryptography.ProtectedData.dll",
-        "ref/net461/System.Security.Cryptography.ProtectedData.dll",
-        "ref/net461/System.Security.Cryptography.ProtectedData.xml",
-        "ref/netstandard1.3/System.Security.Cryptography.ProtectedData.dll",
-        "ref/netstandard2.0/System.Security.Cryptography.ProtectedData.dll",
-        "ref/netstandard2.0/System.Security.Cryptography.ProtectedData.xml",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "ref/xamarintvos10/_._",
-        "ref/xamarinwatchos10/_._",
-        "runtimes/win/lib/net46/System.Security.Cryptography.ProtectedData.dll",
-        "runtimes/win/lib/net461/System.Security.Cryptography.ProtectedData.dll",
-        "runtimes/win/lib/netstandard1.3/System.Security.Cryptography.ProtectedData.dll",
-        "runtimes/win/lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll",
-        "system.security.cryptography.protecteddata.4.4.0.nupkg.sha512",
-        "system.security.cryptography.protecteddata.nuspec",
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
@@ -1785,10 +1669,10 @@
   },
   "projectFileDependencyGroups": {
     "net7.0": [
-      "FluentAssertions >= 6.10.0",
       "Microsoft.NET.Test.Sdk >= 17.5.0",
-      "Microsoft.Playwright.NUnit >= 1.32.0",
-      "NUnit >= 3.13.2",
+      "Microsoft.Playwright.NUnit >= 1.35.0",
+      "NUnit >= 3.13.3",
+      "NUnit.Analyzers >= 3.6.1",
       "NUnit3TestAdapter >= 4.4.2",
       "coverlet.collector >= 3.2.0"
     ]
@@ -1800,11 +1684,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\PlaywrightDemo.csproj",
+      "projectUniqueName": "C:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\PlaywrightDemo.csproj",
       "projectName": "PlaywrightDemo",
-      "projectPath": "c:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\PlaywrightDemo.csproj",
+      "projectPath": "C:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\PlaywrightDemo.csproj",
       "packagesPath": "C:\\Users\\saojonol\\.nuget\\packages\\",
-      "outputPath": "c:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\obj\\",
+      "outputPath": "C:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1839,21 +1723,21 @@
       "net7.0": {
         "targetAlias": "net7.0",
         "dependencies": {
-          "FluentAssertions": {
-            "target": "Package",
-            "version": "[6.10.0, )"
-          },
           "Microsoft.NET.Test.Sdk": {
             "target": "Package",
             "version": "[17.5.0, )"
           },
           "Microsoft.Playwright.NUnit": {
             "target": "Package",
-            "version": "[1.32.0, )"
+            "version": "[1.35.0, )"
           },
           "NUnit": {
             "target": "Package",
-            "version": "[3.13.2, )"
+            "version": "[3.13.3, )"
+          },
+          "NUnit.Analyzers": {
+            "target": "Package",
+            "version": "[3.6.1, )"
           },
           "NUnit3TestAdapter": {
             "target": "Package",

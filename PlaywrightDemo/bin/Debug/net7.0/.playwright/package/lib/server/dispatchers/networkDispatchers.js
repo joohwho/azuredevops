@@ -123,22 +123,20 @@ class RouteDispatcher extends _dispatcher.Dispatcher {
   }
   async continue(params, metadata) {
     // Used to discriminate between continue in tracing.
-    metadata.params.requestUrl = this._object.request().url();
     await this._object.continue({
       url: params.url,
       method: params.method,
       headers: params.headers,
-      postData: params.postData
+      postData: params.postData,
+      isFallback: params.isFallback
     });
   }
   async fulfill(params, metadata) {
     // Used to discriminate between fulfills in tracing.
-    metadata.params.requestUrl = this._object.request().url();
     await this._object.fulfill(params);
   }
   async abort(params, metadata) {
     // Used to discriminate between abort in tracing.
-    metadata.params.requestUrl = this._object.request().url();
     await this._object.abort(params.errorCode || 'failed');
   }
   async redirectNavigationRequest(params) {

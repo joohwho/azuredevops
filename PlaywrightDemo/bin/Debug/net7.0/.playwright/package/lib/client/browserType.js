@@ -29,17 +29,20 @@ var _timeoutRunner = require("../utils/timeoutRunner");
  * limitations under the License.
  */
 
+// This is here just for api generation and checking.
+
 class BrowserType extends _channelOwner.ChannelOwner {
   constructor(...args) {
     super(...args);
     this._serverLauncher = void 0;
     this._contexts = new Set();
     this._playwright = void 0;
+    // Instrumentation.
     this._defaultContextOptions = void 0;
+    this._defaultContextTimeout = void 0;
+    this._defaultContextNavigationTimeout = void 0;
     this._defaultLaunchOptions = void 0;
     this._defaultConnectOptions = void 0;
-    this._onDidCreateContext = void 0;
-    this._onWillCloseContext = void 0;
   }
   static from(browserType) {
     return browserType._object;
@@ -149,10 +152,11 @@ class BrowserType extends _channelOwner.ChannelOwner {
       };
       if (params.__testHookRedirectPortForwarding) connectParams.socksProxyRedirectPortForTest = params.__testHookRedirectPortForwarding;
       const {
-        pipe
+        pipe,
+        headers: connectHeaders
       } = await localUtils._channel.connect(connectParams);
       const closePipe = () => pipe.close().catch(() => {});
-      const connection = new _connection.Connection(localUtils);
+      const connection = new _connection.Connection(localUtils, this._instrumentation);
       connection.markAsRemote();
       connection.on('close', closePipe);
       let browser;
@@ -194,6 +198,7 @@ class BrowserType extends _channelOwner.ChannelOwner {
         browser = _browser3.Browser.from(playwright._initializer.preLaunchedBrowser);
         this._didLaunchBrowser(browser, {}, logger);
         browser._shouldCloseConnectionOnClose = true;
+        browser._connectHeaders = connectHeaders;
         browser.on(_events.Events.Browser.Disconnected, closePipe);
         return browser;
       }, deadline ? deadline - (0, _utils.monotonicTime)() : 0);
@@ -231,17 +236,17 @@ class BrowserType extends _channelOwner.ChannelOwner {
     browser._logger = logger;
   }
   async _didCreateContext(context, contextOptions, browserOptions, logger) {
-    var _this$_onDidCreateCon;
     context._logger = logger;
     context._browserType = this;
     this._contexts.add(context);
     context._setOptions(contextOptions, browserOptions);
-    await ((_this$_onDidCreateCon = this._onDidCreateContext) === null || _this$_onDidCreateCon === void 0 ? void 0 : _this$_onDidCreateCon.call(this, context));
+    if (this._defaultContextTimeout !== undefined) context.setDefaultTimeout(this._defaultContextTimeout);
+    if (this._defaultContextNavigationTimeout !== undefined) context.setDefaultNavigationTimeout(this._defaultContextNavigationTimeout);
+    await this._instrumentation.onDidCreateBrowserContext(context);
   }
   async _willCloseContext(context) {
-    var _this$_onWillCloseCon;
     this._contexts.delete(context);
-    await ((_this$_onWillCloseCon = this._onWillCloseContext) === null || _this$_onWillCloseCon === void 0 ? void 0 : _this$_onWillCloseCon.call(this, context));
+    await this._instrumentation.onWillCloseBrowserContext(context);
   }
 }
 exports.BrowserType = BrowserType;

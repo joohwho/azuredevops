@@ -5,13 +5,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.NET_DEFAULT_TIMEOUT = void 0;
 exports.constructURLBasedOnBaseURL = constructURLBasedOnBaseURL;
-exports.createSocket = createSocket;
+exports.createHttpServer = createHttpServer;
+exports.createHttpsServer = createHttpsServer;
 exports.fetchData = fetchData;
 exports.httpRequest = httpRequest;
 exports.urlMatches = urlMatches;
+exports.urlMatchesEqual = urlMatchesEqual;
 var _http = _interopRequireDefault(require("http"));
 var _https = _interopRequireDefault(require("https"));
-var _net = _interopRequireDefault(require("net"));
 var _utilsBundle = require("../utilsBundle");
 var URL = _interopRequireWildcard(require("url"));
 var _rtti = require("./rtti");
@@ -36,16 +37,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * limitations under the License.
  */
 
-async function createSocket(host, port) {
-  return new Promise((resolve, reject) => {
-    const socket = _net.default.createConnection({
-      host,
-      port
-    });
-    socket.on('connect', () => resolve(socket));
-    socket.on('error', error => reject(error));
-  });
-}
 const NET_DEFAULT_TIMEOUT = 30_000;
 exports.NET_DEFAULT_TIMEOUT = NET_DEFAULT_TIMEOUT;
 function httpRequest(params, onResponse, onError) {
@@ -80,7 +71,7 @@ function httpRequest(params, onResponse, onError) {
     const statusCode = res.statusCode || 0;
     if (statusCode >= 300 && statusCode < 400 && res.headers.location) httpRequest({
       ...params,
-      url: res.headers.location
+      url: new URL.URL(res.headers.location, params.url).toString()
     }, onResponse, onError);else onResponse(res);
   };
   const request = options.protocol === 'https:' ? _https.default.request(options, requestCallback) : _http.default.request(options, requestCallback);
@@ -113,6 +104,10 @@ function fetchData(params, onError) {
     }, reject);
   });
 }
+function urlMatchesEqual(match1, match2) {
+  if ((0, _rtti.isRegExp)(match1) && (0, _rtti.isRegExp)(match2)) return match1.source === match2.source && match1.flags === match2.flags;
+  return match1 === match2;
+}
 function urlMatches(baseURL, urlString, match) {
   if (match === undefined || match === '') return true;
   if ((0, _rtti.isString)(match) && !match.startsWith('*')) match = constructURLBasedOnBaseURL(baseURL, match);
@@ -138,4 +133,27 @@ function constructURLBasedOnBaseURL(baseURL, givenURL) {
   } catch (e) {
     return givenURL;
   }
+}
+function createHttpServer(...args) {
+  const server = _http.default.createServer(...args);
+  decorateServer(server);
+  return server;
+}
+function createHttpsServer(...args) {
+  const server = _https.default.createServer(...args);
+  decorateServer(server);
+  return server;
+}
+function decorateServer(server) {
+  const sockets = new Set();
+  server.on('connection', socket => {
+    sockets.add(socket);
+    socket.once('close', () => sockets.delete(socket));
+  });
+  const close = server.close;
+  server.close = callback => {
+    for (const socket of sockets) socket.destroy();
+    sockets.clear();
+    return close.call(server, callback);
+  };
 }

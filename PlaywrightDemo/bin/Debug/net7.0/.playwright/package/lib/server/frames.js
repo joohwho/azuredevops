@@ -21,6 +21,7 @@ var _protocolError = require("./protocolError");
 var _selectorParser = require("../utils/isomorphic/selectorParser");
 var _locatorGenerators = require("../utils/isomorphic/locatorGenerators");
 var _frameSelectors = require("./frameSelectors");
+var _errors = require("../common/errors");
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 /**
@@ -595,23 +596,16 @@ class Frame extends _instrumentation.SdkObject {
   _utilityContext() {
     return this._context('utility');
   }
-  async evaluateExpressionHandleAndWaitForSignals(expression, isFunction, arg, world = 'main') {
-    const context = await this._context(world);
-    const handle = await context.evaluateExpressionHandleAndWaitForSignals(expression, {
-      isFunction
-    }, arg);
-    return handle;
-  }
-  async evaluateExpression(expression, isFunction, arg, world = 'main') {
-    const context = await this._context(world);
-    const value = await context.evaluateExpression(expression, {
-      isFunction
-    }, arg);
+  async evaluateExpression(expression, options = {}, arg) {
+    var _options$world;
+    const context = await this._context((_options$world = options.world) !== null && _options$world !== void 0 ? _options$world : 'main');
+    const value = await context.evaluateExpression(expression, options, arg);
     return value;
   }
-  async evaluateExpressionAndWaitForSignals(expression, options, arg, world = 'main') {
-    const context = await this._context(world);
-    const value = await context.evaluateExpressionAndWaitForSignals(expression, options, arg);
+  async evaluateExpressionHandle(expression, options = {}, arg) {
+    var _options$world2;
+    const context = await this._context((_options$world2 = options.world) !== null && _options$world2 !== void 0 ? _options$world2 : 'main');
+    const value = await context.evaluateExpressionHandle(expression, options, arg);
     return value;
   }
   async querySelector(selector, options) {
@@ -631,7 +625,10 @@ class Frame extends _instrumentation.SdkObject {
       const promise = this.retryWithProgressAndTimeouts(progress, [0, 20, 50, 100, 100, 500], async continuePolling => {
         const resolved = await this.selectors.resolveInjectedForSelector(selector, options, scope);
         progress.throwIfAborted();
-        if (!resolved) return continuePolling;
+        if (!resolved) {
+          if (state === 'hidden' || state === 'detached') return null;
+          return continuePolling;
+        }
         const result = await resolved.injected.evaluateHandle((injected, {
           info,
           root
@@ -676,6 +673,10 @@ class Frame extends _instrumentation.SdkObject {
           result.dispose();
           return continuePolling;
         }
+        if (options.omitReturnValue) {
+          result.dispose();
+          return null;
+        }
         const element = state === 'attached' || state === 'visible' ? await result.evaluateHandle(r => r.element) : null;
         result.dispose();
         if (!element) return null;
@@ -700,30 +701,36 @@ class Frame extends _instrumentation.SdkObject {
       ...options
     });
   }
-  async evalOnSelectorAndWaitForSignals(selector, strict, expression, isFunction, arg) {
+  async evalOnSelector(selector, strict, expression, isFunction, arg) {
     const handle = await this.selectors.query(selector, {
       strict
     });
     if (!handle) throw new Error(`Error: failed to find element matching selector "${selector}"`);
-    const result = await handle.evaluateExpressionAndWaitForSignals(expression, isFunction, true, arg);
+    const result = await handle.evaluateExpression(expression, {
+      isFunction
+    }, arg);
     handle.dispose();
     return result;
   }
-  async evalOnSelectorAllAndWaitForSignals(selector, expression, isFunction, arg) {
+  async evalOnSelectorAll(selector, expression, isFunction, arg) {
     const arrayHandle = await this.selectors.queryArrayInMainWorld(selector);
-    const result = await arrayHandle.evaluateExpressionAndWaitForSignals(expression, isFunction, true, arg);
+    const result = await arrayHandle.evaluateExpression(expression, {
+      isFunction
+    }, arg);
     arrayHandle.dispose();
     return result;
   }
-  async maskSelectors(selectors) {
+  async maskSelectors(selectors, color) {
     const context = await this._utilityContext();
     const injectedScript = await context.injectedScript();
     await injectedScript.evaluate((injected, {
-      parsed
+      parsed,
+      color
     }) => {
-      injected.maskSelectors(parsed);
+      injected.maskSelectors(parsed, color);
     }, {
-      parsed: selectors
+      parsed: selectors,
+      color: color
     });
   }
   async querySelectorAll(selector) {
@@ -879,8 +886,8 @@ class Frame extends _instrumentation.SdkObject {
     let cspMessage;
     const actionPromise = func().then(r => result = r).catch(e => error = e);
     const errorPromise = new Promise(resolve => {
-      listeners.push(_eventsHelper.eventsHelper.addEventListener(this._page, _page.Page.Events.Console, message => {
-        if (message.type() === 'error' && message.text().includes('Content Security Policy')) {
+      listeners.push(_eventsHelper.eventsHelper.addEventListener(this._page._browserContext, _browserContext.BrowserContext.Events.Console, message => {
+        if (message.page() === this._page && message.type() === 'error' && message.text().includes('Content Security Policy')) {
           cspMessage = message;
           resolve();
         }
@@ -1115,7 +1122,10 @@ class Frame extends _instrumentation.SdkObject {
       }, {
         info: resolved.info
       });
-    }, this._page._timeoutSettings.timeout({}));
+    }, this._page._timeoutSettings.timeout({})).catch(e => {
+      if (js.isJavaScriptErrorInEvaluate(e) || (0, _selectorParser.isInvalidSelectorError)(e) || (0, _protocolError.isSessionClosedError)(e)) throw e;
+      return false;
+    });
   }
   async isHidden(metadata, selector, options = {}) {
     return !(await this.isVisible(metadata, selector, options));
@@ -1203,8 +1213,10 @@ class Frame extends _instrumentation.SdkObject {
   async _expectInternal(metadata, selector, options, oneShot, timeout, lastIntermediateResult) {
     const controller = new _progress.ProgressController(metadata, this);
     return controller.run(async progress => {
-      if (oneShot) progress.log(`${metadata.apiName}${timeout ? ` with timeout ${timeout}ms` : ''}`);
-      progress.log(`waiting for ${this._asLocator(selector)}`);
+      if (oneShot) {
+        progress.log(`${metadata.apiName}${timeout ? ` with timeout ${timeout}ms` : ''}`);
+        progress.log(`waiting for ${this._asLocator(selector)}`);
+      }
       return await this.retryWithProgressAndTimeouts(progress, [100, 250, 500, 1000], async continuePolling => {
         var _info$world;
         const selectorInFrame = await this.selectors.resolveFrameForSelector(selector, {
@@ -1272,7 +1284,8 @@ class Frame extends _instrumentation.SdkObject {
         matches: options.isNot,
         log: metadata.log
       };
-      if (lastIntermediateResult.isSet) result.received = lastIntermediateResult.received;else result.timedOut = true;
+      if (lastIntermediateResult.isSet) result.received = lastIntermediateResult.received;
+      if (e instanceof _errors.TimeoutError) result.timedOut = true;
       return result;
     });
   }
@@ -1511,7 +1524,7 @@ class Frame extends _instrumentation.SdkObject {
     }).catch(() => {});
   }
   _asLocator(selector) {
-    return (0, _locatorGenerators.asLocator)(this._page.context()._browser.options.sdkLanguage, selector);
+    return (0, _locatorGenerators.asLocator)(this._page.attribution.playwright.options.sdkLanguage, selector);
   }
 }
 exports.Frame = Frame;

@@ -26,6 +26,8 @@ var _cdpSession = require("./cdpSession");
  */
 
 class Browser extends _channelOwner.ChannelOwner {
+  // Used from @playwright/test fixtures.
+
   static from(browser) {
     return browser._object;
   }
@@ -38,6 +40,7 @@ class Browser extends _channelOwner.ChannelOwner {
     this._browserType = void 0;
     this._options = {};
     this._name = void 0;
+    this._connectHeaders = void 0;
     this._name = initializer.name;
     this._channel.on('close', () => this._didClose());
     this._closedPromise = new Promise(f => this.once(_events.Events.Browser.Disconnected, f));
@@ -49,14 +52,14 @@ class Browser extends _channelOwner.ChannelOwner {
     return await this._innerNewContext(options, false);
   }
   async _newContextForReuse(options = {}) {
-    for (const context of this._contexts) {
-      await this._wrapApiCall(async () => {
+    return await this._wrapApiCall(async () => {
+      for (const context of this._contexts) {
         await this._browserType._willCloseContext(context);
-      }, true);
-      for (const page of context.pages()) page._onClose();
-      context._onClose();
-    }
-    return await this._innerNewContext(options, true);
+        for (const page of context.pages()) page._onClose();
+        context._onClose();
+      }
+      return await this._innerNewContext(options, true);
+    }, true);
   }
   async _innerNewContext(options = {}, forReuse) {
     options = {
@@ -76,11 +79,13 @@ class Browser extends _channelOwner.ChannelOwner {
     return this._initializer.version;
   }
   async newPage(options = {}) {
-    const context = await this.newContext(options);
-    const page = await context.newPage();
-    page._ownedContext = context;
-    context._ownerPage = page;
-    return page;
+    return await this._wrapApiCall(async () => {
+      const context = await this.newContext(options);
+      const page = await context.newPage();
+      page._ownedContext = context;
+      context._ownerPage = page;
+      return page;
+    });
   }
   isConnected() {
     return this._isConnected;

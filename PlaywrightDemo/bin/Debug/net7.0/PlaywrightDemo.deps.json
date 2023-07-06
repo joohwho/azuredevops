@@ -8,10 +8,10 @@
     ".NETCoreApp,Version=v7.0": {
       "PlaywrightDemo/1.0.0": {
         "dependencies": {
-          "FluentAssertions": "6.10.0",
           "Microsoft.NET.Test.Sdk": "17.5.0",
-          "Microsoft.Playwright.NUnit": "1.32.0",
-          "NUnit": "3.13.2",
+          "Microsoft.Playwright.NUnit": "1.35.0",
+          "NUnit": "3.13.3",
+          "NUnit.Analyzers": "3.6.1",
           "NUnit3TestAdapter": "4.4.2",
           "coverlet.collector": "3.2.0"
         },
@@ -20,17 +20,6 @@
         }
       },
       "coverlet.collector/3.2.0": {},
-      "FluentAssertions/6.10.0": {
-        "dependencies": {
-          "System.Configuration.ConfigurationManager": "4.4.0"
-        },
-        "runtime": {
-          "lib/net6.0/FluentAssertions.dll": {
-            "assemblyVersion": "6.10.0.0",
-            "fileVersion": "6.10.0.0"
-          }
-        }
-      },
       "Microsoft.Bcl.AsyncInterfaces/7.0.0": {
         "runtime": {
           "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
@@ -54,7 +43,7 @@
         }
       },
       "Microsoft.NETCore.Platforms/1.1.0": {},
-      "Microsoft.Playwright/1.32.0": {
+      "Microsoft.Playwright/1.35.0": {
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "7.0.0",
           "System.ComponentModel.Annotations": "5.0.0",
@@ -62,35 +51,35 @@
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.Playwright.dll": {
-            "assemblyVersion": "1.32.0.0",
-            "fileVersion": "1.32.0.0"
+            "assemblyVersion": "1.35.0.0",
+            "fileVersion": "1.35.0.0"
           }
         }
       },
-      "Microsoft.Playwright.NUnit/1.32.0": {
+      "Microsoft.Playwright.NUnit/1.35.0": {
         "dependencies": {
           "Microsoft.NET.Test.Sdk": "17.5.0",
-          "Microsoft.Playwright": "1.32.0",
-          "Microsoft.Playwright.TestAdapter": "1.32.0",
-          "NUnit": "3.13.2",
+          "Microsoft.Playwright": "1.35.0",
+          "Microsoft.Playwright.TestAdapter": "1.35.0",
+          "NUnit": "3.13.3",
           "NUnit3TestAdapter": "4.4.2"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.Playwright.NUnit.dll": {
-            "assemblyVersion": "1.32.0.0",
-            "fileVersion": "1.32.0.0"
+            "assemblyVersion": "1.35.0.0",
+            "fileVersion": "1.35.0.0"
           }
         }
       },
-      "Microsoft.Playwright.TestAdapter/1.32.0": {
+      "Microsoft.Playwright.TestAdapter/1.35.0": {
         "dependencies": {
-          "Microsoft.Playwright": "1.32.0",
+          "Microsoft.Playwright": "1.35.0",
           "Microsoft.TestPlatform.ObjectModel": "17.5.0"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.Playwright.TestAdapter.dll": {
-            "assemblyVersion": "1.32.0.0",
-            "fileVersion": "1.32.0.0"
+            "assemblyVersion": "1.35.0.0",
+            "fileVersion": "1.35.0.0"
           }
         }
       },
@@ -362,47 +351,21 @@
           }
         }
       },
-      "NUnit/3.13.2": {
+      "NUnit/3.13.3": {
         "dependencies": {
           "NETStandard.Library": "2.0.0"
         },
         "runtime": {
           "lib/netstandard2.0/nunit.framework.dll": {
-            "assemblyVersion": "3.13.2.0",
-            "fileVersion": "3.13.2.0"
+            "assemblyVersion": "3.13.3.0",
+            "fileVersion": "3.13.3.0"
           }
         }
       },
+      "NUnit.Analyzers/3.6.1": {},
       "NUnit3TestAdapter/4.4.2": {},
       "System.ComponentModel.Annotations/5.0.0": {},
-      "System.Configuration.ConfigurationManager/4.4.0": {
-        "dependencies": {
-          "System.Security.Cryptography.ProtectedData": "4.4.0"
-        },
-        "runtime": {
-          "lib/netstandard2.0/System.Configuration.ConfigurationManager.dll": {
-            "assemblyVersion": "4.0.0.0",
-            "fileVersion": "4.6.25519.3"
-          }
-        }
-      },
       "System.Reflection.Metadata/1.6.0": {},
-      "System.Security.Cryptography.ProtectedData/4.4.0": {
-        "runtime": {
-          "lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll": {
-            "assemblyVersion": "4.0.2.0",
-            "fileVersion": "4.6.25519.3"
-          }
-        },
-        "runtimeTargets": {
-          "runtimes/win/lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll": {
-            "rid": "win",
-            "assetType": "runtime",
-            "assemblyVersion": "4.0.2.0",
-            "fileVersion": "4.6.25519.3"
-          }
-        }
-      },
       "System.Text.Encodings.Web/7.0.0": {},
       "System.Text.Json/7.0.0": {
         "dependencies": {
@@ -423,13 +386,6 @@
       "sha512": "sha512-xjY8xBigSeWIYs4I7DgUHqSNoGqnHi7Fv7/7RZD02rvZyG3hlsjnQKiVKVWKgr9kRKgmV+dEfu8KScvysiC0Wg==",
       "path": "coverlet.collector/3.2.0",
       "hashPath": "coverlet.collector.3.2.0.nupkg.sha512"
-    },
-    "FluentAssertions/6.10.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-Da3YsiRDnOHKBfxutjnupL1rOX0K/jnG6crn5AgwukeqZ/yi+HNCOFshic01ke0ztZFWzpfQMXH8fO9aAbG0Gw==",
-      "path": "fluentassertions/6.10.0",
-      "hashPath": "fluentassertions.6.10.0.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/7.0.0": {
       "type": "package",
@@ -459,26 +415,26 @@
       "path": "microsoft.netcore.platforms/1.1.0",
       "hashPath": "microsoft.netcore.platforms.1.1.0.nupkg.sha512"
     },
-    "Microsoft.Playwright/1.32.0": {
+    "Microsoft.Playwright/1.35.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-wqK1x8usn8bJOWLlX9HPI3sdQA/DzSW9IFBBC7uvD/cD4JKlPv8tN/ubCia+O1JDy11cOQytRUNa4vyZ6/uK7Q==",
-      "path": "microsoft.playwright/1.32.0",
-      "hashPath": "microsoft.playwright.1.32.0.nupkg.sha512"
+      "sha512": "sha512-0AFDebTHdLvgPp2Z3OruJZnl5bSJR/SCYnw/PBa7B5uT08U3T1uAVcq9V8UeubkMp8d2e5b4uf9HLK6bCeipsA==",
+      "path": "microsoft.playwright/1.35.0",
+      "hashPath": "microsoft.playwright.1.35.0.nupkg.sha512"
     },
-    "Microsoft.Playwright.NUnit/1.32.0": {
+    "Microsoft.Playwright.NUnit/1.35.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-ExS3Iyv8rJDSOIqFDMdHYRt+Wrbn67BdNjmAaN6XUItWuS3jX+8PnrxGmLrqmAfY665htkbcVCeYUqf6qpbP4w==",
-      "path": "microsoft.playwright.nunit/1.32.0",
-      "hashPath": "microsoft.playwright.nunit.1.32.0.nupkg.sha512"
+      "sha512": "sha512-zTNEHNnFvGzMEKLSDGJ8J5mtkXsQIbV14J9aSwikoVUjDUk3Uld3sWzCI6h+07DUf6ttBe3PgUMXFURCSCFJgw==",
+      "path": "microsoft.playwright.nunit/1.35.0",
+      "hashPath": "microsoft.playwright.nunit.1.35.0.nupkg.sha512"
     },
-    "Microsoft.Playwright.TestAdapter/1.32.0": {
+    "Microsoft.Playwright.TestAdapter/1.35.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-lYTyzRXgJagH/8jOjlp50YcLOGULpwh2AL4PHOrhh6SjNcM7B4e86SanItI9hXeD155GSOckbqLSvgU1NVNHWA==",
-      "path": "microsoft.playwright.testadapter/1.32.0",
-      "hashPath": "microsoft.playwright.testadapter.1.32.0.nupkg.sha512"
+      "sha512": "sha512-O35OGGLdoRijw6KIZzg4QdAXuAB6/sp4ctHB1qgc1Kq/3XxJfvKoRYq1itZTDkExpbHGWPLAmUNlCP5tUCZ1tA==",
+      "path": "microsoft.playwright.testadapter/1.35.0",
+      "hashPath": "microsoft.playwright.testadapter.1.35.0.nupkg.sha512"
     },
     "Microsoft.TestPlatform.ObjectModel/17.5.0": {
       "type": "package",
@@ -515,12 +471,19 @@
       "path": "nuget.frameworks/5.11.0",
       "hashPath": "nuget.frameworks.5.11.0.nupkg.sha512"
     },
-    "NUnit/3.13.2": {
+    "NUnit/3.13.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-u+fz/lXyR4vlamySNAEMrXvh+GhAQiB6/aVZtU5WjivR5zF26Ui0tfteDtWqT90k9D8y6g8rFKYQC97Z7d195w==",
-      "path": "nunit/3.13.2",
-      "hashPath": "nunit.3.13.2.nupkg.sha512"
+      "sha512": "sha512-KNPDpls6EfHwC3+nnA67fh5wpxeLb3VLFAfLxrug6JMYDLHH6InaQIWR7Sc3y75d/9IKzMksH/gi08W7XWbmnQ==",
+      "path": "nunit/3.13.3",
+      "hashPath": "nunit.3.13.3.nupkg.sha512"
+    },
+    "NUnit.Analyzers/3.6.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-RKP9tpKfl3DmRgUDGgh3XM3XzeLMrCXXMZm6vm1nMsObZ6vtQL1L9NrK7+oZh1jWearvNsbMis2+AIOY3NFmow==",
+      "path": "nunit.analyzers/3.6.1",
+      "hashPath": "nunit.analyzers.3.6.1.nupkg.sha512"
     },
     "NUnit3TestAdapter/4.4.2": {
       "type": "package",
@@ -536,26 +499,12 @@
       "path": "system.componentmodel.annotations/5.0.0",
       "hashPath": "system.componentmodel.annotations.5.0.0.nupkg.sha512"
     },
-    "System.Configuration.ConfigurationManager/4.4.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-gWwQv/Ug1qWJmHCmN17nAbxJYmQBM/E94QxKLksvUiiKB1Ld3Sc/eK1lgmbSjDFxkQhVuayI/cGFZhpBSodLrg==",
-      "path": "system.configuration.configurationmanager/4.4.0",
-      "hashPath": "system.configuration.configurationmanager.4.4.0.nupkg.sha512"
-    },
     "System.Reflection.Metadata/1.6.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-COC1aiAJjCoA5GBF+QKL2uLqEBew4JsCkQmoHKbN3TlOZKa2fKLz5CpiRQKDz0RsAOEGsVKqOD5bomsXq/4STQ==",
       "path": "system.reflection.metadata/1.6.0",
       "hashPath": "system.reflection.metadata.1.6.0.nupkg.sha512"
-    },
-    "System.Security.Cryptography.ProtectedData/4.4.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-cJV7ScGW7EhatRsjehfvvYVBvtiSMKgN8bOVI0bQhnF5bU7vnHVIsH49Kva7i7GWaWYvmEzkYVk1TC+gZYBEog==",
-      "path": "system.security.cryptography.protecteddata/4.4.0",
-      "hashPath": "system.security.cryptography.protecteddata.4.4.0.nupkg.sha512"
     },
     "System.Text.Encodings.Web/7.0.0": {
       "type": "package",

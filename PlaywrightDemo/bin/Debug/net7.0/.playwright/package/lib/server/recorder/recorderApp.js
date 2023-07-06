@@ -63,6 +63,7 @@ class RecorderApp extends _events.EventEmitter {
       const file = require.resolve('../../webpack/recorder/' + uri);
       _fs.default.promises.readFile(file).then(buffer => {
         route.fulfill({
+          requestUrl: route.request().url(),
           status: 200,
           headers: [{
             name: 'Content-Type',
@@ -83,9 +84,12 @@ class RecorderApp extends _events.EventEmitter {
     await mainFrame.goto((0, _instrumentation.serverSideCallMetadata)(), 'https://playwright/index.html');
   }
   static async open(recorder, inspectedContext, handleSIGINT) {
-    const sdkLanguage = inspectedContext._browser.options.sdkLanguage;
+    const sdkLanguage = inspectedContext.attribution.playwright.options.sdkLanguage;
     const headed = !!inspectedContext._browser.options.headful;
-    const recorderPlaywright = require('../playwright').createPlaywright('javascript', true);
+    const recorderPlaywright = require('../playwright').createPlaywright({
+      sdkLanguage: 'javascript',
+      isInternalPlaywright: true
+    });
     const args = ['--app=data:text/html,', '--window-size=600,600', '--window-position=1020,10', '--test-type='];
     if (process.env.PWTEST_RECORDER_PORT) args.push(`--remote-debugging-port=${process.env.PWTEST_RECORDER_PORT}`);
     const context = await recorderPlaywright.chromium.launchPersistentContext((0, _instrumentation.serverSideCallMetadata)(), '', {
@@ -110,31 +114,33 @@ class RecorderApp extends _events.EventEmitter {
   async setMode(mode) {
     await this._page.mainFrame().evaluateExpression((mode => {
       window.playwrightSetMode(mode);
-    }).toString(), true, mode, 'main').catch(() => {});
+    }).toString(), {
+      isFunction: true
+    }, mode).catch(() => {});
   }
   async setFileIfNeeded(file) {
     await this._page.mainFrame().evaluateExpression((file => {
       window.playwrightSetFileIfNeeded(file);
-    }).toString(), true, file, 'main').catch(() => {});
+    }).toString(), {
+      isFunction: true
+    }, file).catch(() => {});
   }
   async setPaused(paused) {
     await this._page.mainFrame().evaluateExpression((paused => {
       window.playwrightSetPaused(paused);
-    }).toString(), true, paused, 'main').catch(() => {});
+    }).toString(), {
+      isFunction: true
+    }, paused).catch(() => {});
   }
   async setSources(sources) {
     await this._page.mainFrame().evaluateExpression((sources => {
       window.playwrightSetSources(sources);
-    }).toString(), true, sources, 'main').catch(() => {});
+    }).toString(), {
+      isFunction: true
+    }, sources).catch(() => {});
 
     // Testing harness for runCLI mode.
-    {
-      if ((process.env.PWTEST_CLI_IS_UNDER_TEST || process.env.PWTEST_CLI_EXIT) && sources.length) {
-        process.stdout.write('\n-------------8<-------------\n');
-        process.stdout.write(sources[0].text);
-        process.stdout.write('\n-------------8<-------------\n');
-      }
-    }
+    if (process.env.PWTEST_CLI_IS_UNDER_TEST && sources.length) process._didSetSourcesForTest(sources[0].text);
   }
   async setSelector(selector, focus) {
     if (focus) {
@@ -143,15 +149,19 @@ class RecorderApp extends _events.EventEmitter {
     }
     await this._page.mainFrame().evaluateExpression((arg => {
       window.playwrightSetSelector(arg.selector, arg.focus);
-    }).toString(), true, {
+    }).toString(), {
+      isFunction: true
+    }, {
       selector,
       focus
-    }, 'main').catch(() => {});
+    }).catch(() => {});
   }
   async updateCallLogs(callLogs) {
     await this._page.mainFrame().evaluateExpression((callLogs => {
       window.playwrightUpdateLogs(callLogs);
-    }).toString(), true, callLogs, 'main').catch(() => {});
+    }).toString(), {
+      isFunction: true
+    }, callLogs).catch(() => {});
   }
 }
 exports.RecorderApp = RecorderApp;

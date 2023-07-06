@@ -184,7 +184,7 @@ class LocalUtilsDispatcher extends _dispatcher.Dispatcher {
         ...params.headers
       };
       const wsEndpoint = await urlToWSEndpoint(progress, params.wsEndpoint);
-      const transport = await _transport.WebSocketTransport.connect(progress, wsEndpoint, wsHeaders, true);
+      const transport = await _transport.WebSocketTransport.connect(progress, wsEndpoint, wsHeaders, true, 'x-playwright-debug-log');
       const socksInterceptor = new _socksInterceptor.SocksInterceptor(transport, params.exposeNetwork, params.socksProxyRedirectPortForTest);
       const pipe = new _jsonPipeDispatcher.JsonPipeDispatcher(this);
       transport.onmessage = json => {
@@ -207,7 +207,8 @@ class LocalUtilsDispatcher extends _dispatcher.Dispatcher {
       };
       pipe.on('close', () => transport.close());
       return {
-        pipe
+        pipe,
+        headers: transport.headers
       };
     }, params.timeout || 0);
   }

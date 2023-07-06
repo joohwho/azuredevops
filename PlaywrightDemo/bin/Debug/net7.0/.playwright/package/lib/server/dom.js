@@ -39,15 +39,12 @@ function isNonRecoverableDOMError(error) {
 }
 class FrameExecutionContext extends js.ExecutionContext {
   constructor(delegate, frame, world) {
-    super(frame, delegate);
+    super(frame, delegate, world || 'content-script');
     this.frame = void 0;
     this._injectedScriptPromise = void 0;
     this.world = void 0;
     this.frame = frame;
     this.world = world;
-  }
-  async waitForSignalsCreatedBy(action) {
-    return this.frame._page._frameManager.waitForSignalsCreatedBy(null, false, action);
   }
   adoptIfNeeded(handle) {
     if (handle instanceof ElementHandle && handle._context !== this) return this.frame._page._delegate.adoptElementHandle(handle, this);
@@ -65,18 +62,11 @@ class FrameExecutionContext extends js.ExecutionContext {
       returnByValue: true
     }, arg);
   }
-  async evaluateExpressionAndWaitForSignals(expression, options, arg) {
-    return await this.frame._page._frameManager.waitForSignalsCreatedBy(null, false /* noWaitFor */, async () => {
-      return this.evaluateExpression(expression, options, arg);
-    });
-  }
-  async evaluateExpressionHandleAndWaitForSignals(expression, options, arg) {
-    return await this.frame._page._frameManager.waitForSignalsCreatedBy(null, false /* noWaitFor */, async () => {
-      return js.evaluateExpression(this, expression, {
-        ...options,
-        returnByValue: false
-      }, arg);
-    });
+  async evaluateExpressionHandle(expression, options, arg) {
+    return js.evaluateExpression(this, expression, {
+      ...options,
+      returnByValue: false
+    }, arg);
   }
   createHandle(remoteObject) {
     if (this.frame._page._delegate.isElementHandle(remoteObject)) return new ElementHandle(this, remoteObject.objectId);
@@ -89,7 +79,7 @@ class FrameExecutionContext extends js.ExecutionContext {
       for (const [name, {
         source
       }] of selectorsRegistry._engines) custom.push(`{ name: '${name}', engine: (${source}) }`);
-      const sdkLanguage = this.frame._page.context()._browser.options.sdkLanguage;
+      const sdkLanguage = this.frame.attribution.playwright.options.sdkLanguage;
       const source = `
         (() => {
         const module = {};
@@ -105,7 +95,7 @@ class FrameExecutionContext extends js.ExecutionContext {
         );
         })();
       `;
-      this._injectedScriptPromise = this.rawEvaluateHandle(source).then(objectId => new js.JSHandle(this, 'object', undefined, objectId));
+      this._injectedScriptPromise = this.rawEvaluateHandle(source).then(objectId => new js.JSHandle(this, 'object', 'InjectedScript', objectId));
     }
     return this._injectedScriptPromise;
   }
@@ -421,6 +411,7 @@ class ElementHandle extends js.JSHandle {
         // Do not await here, just in case the renderer is stuck (e.g. on alert)
         // and we won't be able to cleanup.
         hitTargetInterceptionHandle.evaluate(h => h.stop()).catch(e => {});
+        hitTargetInterceptionHandle.dispose();
       });
     }
     const actionResult = await this._page._frameManager.waitForSignalsCreatedBy(progress, options.noWaitAfter, async () => {
@@ -432,7 +423,10 @@ class ElementHandle extends js.JSHandle {
       await action(point);
       if (restoreModifiers) await this._page.keyboard._ensureModifiers(restoreModifiers);
       if (hitTargetInterceptionHandle) {
-        const stopHitTargetInterception = hitTargetInterceptionHandle.evaluate(h => h.stop()).catch(e => 'done');
+        const stopHitTargetInterception = hitTargetInterceptionHandle.evaluate(h => h.stop()).catch(e => 'done').finally(() => {
+          var _hitTargetInterceptio;
+          (_hitTargetInterceptio = hitTargetInterceptionHandle) === null || _hitTargetInterceptio === void 0 ? void 0 : _hitTargetInterceptio.dispose();
+        });
         if (!options.noWaitAfter) {
           // When noWaitAfter is passed, we do not want to accidentally stall on
           // non-committed navigation blocking the evaluate.
@@ -687,18 +681,22 @@ class ElementHandle extends js.JSHandle {
   async querySelectorAll(selector) {
     return this._frame.selectors.queryAll(selector, this);
   }
-  async evalOnSelectorAndWaitForSignals(selector, strict, expression, isFunction, arg) {
+  async evalOnSelector(selector, strict, expression, isFunction, arg) {
     const handle = await this._frame.selectors.query(selector, {
       strict
     }, this);
     if (!handle) throw new Error(`Error: failed to find element matching selector "${selector}"`);
-    const result = await handle.evaluateExpressionAndWaitForSignals(expression, isFunction, true, arg);
+    const result = await handle.evaluateExpression(expression, {
+      isFunction
+    }, arg);
     handle.dispose();
     return result;
   }
-  async evalOnSelectorAllAndWaitForSignals(selector, expression, isFunction, arg) {
+  async evalOnSelectorAll(selector, expression, isFunction, arg) {
     const arrayHandle = await this._frame.selectors.queryArrayInMainWorld(selector, this);
-    const result = await arrayHandle.evaluateExpressionAndWaitForSignals(expression, isFunction, true, arg);
+    const result = await arrayHandle.evaluateExpression(expression, {
+      isFunction
+    }, arg);
     arrayHandle.dispose();
     return result;
   }

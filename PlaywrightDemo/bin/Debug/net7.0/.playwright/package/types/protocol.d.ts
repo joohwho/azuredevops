@@ -770,25 +770,6 @@ transferred to a context that is not cross-origin isolated.
       isWarning: boolean;
       type: SharedArrayBufferIssueType;
     }
-    export type TwaQualityEnforcementViolationType = "kHttpError"|"kUnavailableOffline"|"kDigitalAssetLinks";
-    export interface TrustedWebActivityIssueDetails {
-      /**
-       * The url that triggers the violation.
-       */
-      url: string;
-      violationType: TwaQualityEnforcementViolationType;
-      httpStatusCode?: number;
-      /**
-       * The package name of the Trusted Web Activity client app. This field is
-only used when violation type is kDigitalAssetLinks.
-       */
-      packageName?: string;
-      /**
-       * The signature of the Trusted Web Activity client app. This field is only
-used when violation type is kDigitalAssetLinks.
-       */
-      signature?: string;
-    }
     export interface LowTextContrastIssueDetails {
       violatingNodeId: DOM.BackendNodeId;
       violatingNodeSelector: string;
@@ -811,7 +792,7 @@ CORS RFC1918 enforcement.
       resourceIPAddressSpace?: Network.IPAddressSpace;
       clientSecurityState?: Network.ClientSecurityState;
     }
-    export type AttributionReportingIssueType = "PermissionPolicyDisabled"|"PermissionPolicyNotDelegated"|"UntrustworthyReportingOrigin"|"InsecureContext"|"InvalidHeader"|"InvalidRegisterTriggerHeader"|"InvalidEligibleHeader"|"TooManyConcurrentRequests"|"SourceAndTriggerHeaders"|"SourceIgnored"|"TriggerIgnored";
+    export type AttributionReportingIssueType = "PermissionPolicyDisabled"|"UntrustworthyReportingOrigin"|"InsecureContext"|"InvalidHeader"|"InvalidRegisterTriggerHeader"|"SourceAndTriggerHeaders"|"SourceIgnored"|"TriggerIgnored"|"OsSourceIgnored"|"OsTriggerIgnored"|"InvalidRegisterOsSourceHeader"|"InvalidRegisterOsTriggerHeader"|"WebAndOsHeaders"|"NoWebOrOsSupport";
     /**
      * Details for issues around "Attribution Reporting API" usage.
 Explainer: https://github.com/WICG/attribution-reporting-api
@@ -841,7 +822,7 @@ instead of "limited-quirks".
       url: string;
       location?: SourceCodeLocation;
     }
-    export type GenericIssueErrorType = "CrossOriginPortalPostMessageError"|"FormLabelForNameError"|"FormDuplicateIdForInputError"|"FormInputWithNoLabelError"|"FormAutocompleteAttributeEmptyError"|"FormEmptyIdAndNameAttributesForInputError"|"FormAriaLabelledByToNonExistingId"|"FormInputAssignedAutocompleteValueToIdOrNameAttributeError"|"FormLabelHasNeitherForNorNestedInput"|"FormLabelForMatchesNonExistingIdError"|"FormHasPasswordFieldWithoutUsernameFieldError";
+    export type GenericIssueErrorType = "CrossOriginPortalPostMessageError"|"FormLabelForNameError"|"FormDuplicateIdForInputError"|"FormInputWithNoLabelError"|"FormAutocompleteAttributeEmptyError"|"FormEmptyIdAndNameAttributesForInputError"|"FormAriaLabelledByToNonExistingId"|"FormInputAssignedAutocompleteValueToIdOrNameAttributeError"|"FormLabelHasNeitherForNorNestedInput"|"FormLabelForMatchesNonExistingIdError"|"FormInputHasWrongButWellIntendedAutocompleteValueError";
     /**
      * Depending on the concrete errorType, different properties are set.
      */
@@ -852,6 +833,7 @@ instead of "limited-quirks".
       errorType: GenericIssueErrorType;
       frameId?: Page.FrameId;
       violatingNodeId?: DOM.BackendNodeId;
+      violatingNodeAttribute?: string;
     }
     /**
      * This issue tracks information needed to print a deprecation message.
@@ -865,6 +847,16 @@ https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/rende
        */
       type: string;
     }
+    /**
+     * This issue warns about sites in the redirect chain of a finished navigation
+that may be flagged as trackers and have their state cleared if they don't
+receive a user interaction. Note that in this context 'site' means eTLD+1.
+For example, if the URL `https://example.test:80/bounce` was in the
+redirect chain, the site reported would be `example.test`.
+     */
+    export interface BounceTrackingIssueDetails {
+      trackingSites: string[];
+    }
     export type ClientHintIssueReason = "MetaTagAllowListInvalidOrigin"|"MetaTagModifiedHTML";
     export interface FederatedAuthRequestIssueDetails {
       federatedAuthRequestIssueReason: FederatedAuthRequestIssueReason;
@@ -875,7 +867,7 @@ Should be updated alongside RequestIdTokenStatus in
 third_party/blink/public/mojom/devtools/inspector_issue.mojom to include
 all cases except for success.
      */
-    export type FederatedAuthRequestIssueReason = "ShouldEmbargo"|"TooManyRequests"|"WellKnownHttpNotFound"|"WellKnownNoResponse"|"WellKnownInvalidResponse"|"WellKnownListEmpty"|"ConfigNotInWellKnown"|"WellKnownTooBig"|"ConfigHttpNotFound"|"ConfigNoResponse"|"ConfigInvalidResponse"|"ClientMetadataHttpNotFound"|"ClientMetadataNoResponse"|"ClientMetadataInvalidResponse"|"DisabledInSettings"|"ErrorFetchingSignin"|"InvalidSigninResponse"|"AccountsHttpNotFound"|"AccountsNoResponse"|"AccountsInvalidResponse"|"AccountsListEmpty"|"IdTokenHttpNotFound"|"IdTokenNoResponse"|"IdTokenInvalidResponse"|"IdTokenInvalidRequest"|"ErrorIdToken"|"Canceled"|"RpPageNotVisible";
+    export type FederatedAuthRequestIssueReason = "ShouldEmbargo"|"TooManyRequests"|"WellKnownHttpNotFound"|"WellKnownNoResponse"|"WellKnownInvalidResponse"|"WellKnownListEmpty"|"WellKnownInvalidContentType"|"ConfigNotInWellKnown"|"WellKnownTooBig"|"ConfigHttpNotFound"|"ConfigNoResponse"|"ConfigInvalidResponse"|"ConfigInvalidContentType"|"ClientMetadataHttpNotFound"|"ClientMetadataNoResponse"|"ClientMetadataInvalidResponse"|"ClientMetadataInvalidContentType"|"DisabledInSettings"|"ErrorFetchingSignin"|"InvalidSigninResponse"|"AccountsHttpNotFound"|"AccountsNoResponse"|"AccountsInvalidResponse"|"AccountsListEmpty"|"AccountsInvalidContentType"|"IdTokenHttpNotFound"|"IdTokenNoResponse"|"IdTokenInvalidResponse"|"IdTokenInvalidRequest"|"IdTokenInvalidContentType"|"ErrorIdToken"|"Canceled"|"RpPageNotVisible"|"SilentMediationFailure";
     /**
      * This issue tracks client hints related issues. It's used to deprecate old
 features, encourage the use of new ones, and provide general guidance.
@@ -889,7 +881,7 @@ features, encourage the use of new ones, and provide general guidance.
 optional fields in InspectorIssueDetails to convey more specific
 information about the kind of issue.
      */
-    export type InspectorIssueCode = "CookieIssue"|"MixedContentIssue"|"BlockedByResponseIssue"|"HeavyAdIssue"|"ContentSecurityPolicyIssue"|"SharedArrayBufferIssue"|"TrustedWebActivityIssue"|"LowTextContrastIssue"|"CorsIssue"|"AttributionReportingIssue"|"QuirksModeIssue"|"NavigatorUserAgentIssue"|"GenericIssue"|"DeprecationIssue"|"ClientHintIssue"|"FederatedAuthRequestIssue";
+    export type InspectorIssueCode = "CookieIssue"|"MixedContentIssue"|"BlockedByResponseIssue"|"HeavyAdIssue"|"ContentSecurityPolicyIssue"|"SharedArrayBufferIssue"|"LowTextContrastIssue"|"CorsIssue"|"AttributionReportingIssue"|"QuirksModeIssue"|"NavigatorUserAgentIssue"|"GenericIssue"|"DeprecationIssue"|"ClientHintIssue"|"FederatedAuthRequestIssue"|"BounceTrackingIssue";
     /**
      * This struct holds a list of optional fields with additional information
 specific to the kind of issue. When adding a new issue code, please also
@@ -902,7 +894,6 @@ add a new optional field to this type.
       heavyAdIssueDetails?: HeavyAdIssueDetails;
       contentSecurityPolicyIssueDetails?: ContentSecurityPolicyIssueDetails;
       sharedArrayBufferIssueDetails?: SharedArrayBufferIssueDetails;
-      twaQualityEnforcementDetails?: TrustedWebActivityIssueDetails;
       lowTextContrastIssueDetails?: LowTextContrastIssueDetails;
       corsIssueDetails?: CorsIssueDetails;
       attributionReportingIssueDetails?: AttributionReportingIssueDetails;
@@ -912,6 +903,7 @@ add a new optional field to this type.
       deprecationIssueDetails?: DeprecationIssueDetails;
       clientHintIssueDetails?: ClientHintIssueDetails;
       federatedAuthRequestIssueDetails?: FederatedAuthRequestIssueDetails;
+      bounceTrackingIssueDetails?: BounceTrackingIssueDetails;
     }
     /**
      * A unique id for a DevTools inspector issue. Allows other entities (e.g.
@@ -997,6 +989,65 @@ using Audits.issueAdded event.
       reportAAA?: boolean;
     }
     export type checkContrastReturnValue = {
+    }
+    /**
+     * Runs the form issues check for the target page. Found issues are reported
+using Audits.issueAdded event.
+     */
+    export type checkFormsIssuesParameters = {
+    }
+    export type checkFormsIssuesReturnValue = {
+      formIssues: GenericIssueDetails[];
+    }
+  }
+  
+  /**
+   * Defines commands and events for Autofill.
+   */
+  export module Autofill {
+    export interface CreditCard {
+      /**
+       * 16-digit credit card number.
+       */
+      number: string;
+      /**
+       * Name of the credit card owner.
+       */
+      name: string;
+      /**
+       * 2-digit expiry month.
+       */
+      expiryMonth: string;
+      /**
+       * 4-digit expiry year.
+       */
+      expiryYear: string;
+      /**
+       * 3-digit card verification code.
+       */
+      cvc: string;
+    }
+    
+    
+    /**
+     * Trigger autofill on a form identified by the fieldId.
+If the field and related form cannot be autofilled, returns an error.
+     */
+    export type triggerParameters = {
+      /**
+       * Identifies a field that serves as an anchor for autofill.
+       */
+      fieldId: DOM.BackendNodeId;
+      /**
+       * Identifies the frame that field belongs to.
+       */
+      frameId?: Page.FrameId;
+      /**
+       * Credit card information to fill out the form. Credit card data is not saved.
+       */
+      card: CreditCard;
+    }
+    export type triggerReturnValue = {
     }
   }
   
@@ -1516,6 +1567,15 @@ with 'left', 'top', 'width' or 'height'. Leaves unspecified fields unchanged.
     }
     export type executeBrowserCommandReturnValue = {
     }
+    /**
+     * Allows a site to use privacy sandbox features that require enrollment
+without the site actually being enrolled. Only supported on page targets.
+     */
+    export type addPrivacySandboxEnrollmentOverrideParameters = {
+      url: string;
+    }
+    export type addPrivacySandboxEnrollmentOverrideReturnValue = {
+    }
   }
   
   /**
@@ -1598,6 +1658,29 @@ inspector" rules), "regular" for regular stylesheets.
        * Value range in the underlying resource (if available).
        */
       range?: SourceRange;
+      /**
+       * Specificity of the selector.
+       */
+      specificity?: Specificity;
+    }
+    /**
+     * Specificity:
+https://drafts.csswg.org/selectors/#specificity-rules
+     */
+    export interface Specificity {
+      /**
+       * The a component, which represents the number of ID selectors.
+       */
+      a: number;
+      /**
+       * The b component, which represents the number of class selectors, attributes selectors, and
+pseudo-classes.
+       */
+      b: number;
+      /**
+       * The c component, which represents the number of type selectors and pseudo-elements.
+       */
+      c: number;
     }
     /**
      * Selector list data.
@@ -1691,6 +1774,10 @@ CSS module script.
        * Column offset of the end of the stylesheet within the resource (zero based).
        */
       endColumn: number;
+      /**
+       * If the style sheet was loaded from a network resource, this indicates when the resource failed to load
+       */
+      loadingFailed?: boolean;
     }
     /**
      * CSS rule representation.
@@ -1705,6 +1792,10 @@ stylesheet rules) this rule came from.
        * Rule selector data.
        */
       selectorList: SelectorList;
+      /**
+       * Array of selectors from ancestor style rules, sorted by distance from the current rule.
+       */
+      nestingSelectors?: string[];
       /**
        * Parent stylesheet's origin.
        */
@@ -2140,6 +2231,34 @@ and additional information such as platformFontFamily and fontVariationAxes.
       fontVariationAxes?: FontVariationAxis[];
     }
     /**
+     * CSS try rule representation.
+     */
+    export interface CSSTryRule {
+      /**
+       * The css style sheet identifier (absent for user agent stylesheet and user-specified
+stylesheet rules) this rule came from.
+       */
+      styleSheetId?: StyleSheetId;
+      /**
+       * Parent stylesheet's origin.
+       */
+      origin: StyleSheetOrigin;
+      /**
+       * Associated style declaration.
+       */
+      style: CSSStyle;
+    }
+    /**
+     * CSS position-fallback rule representation.
+     */
+    export interface CSSPositionFallbackRule {
+      name: Value;
+      /**
+       * List of keyframes.
+       */
+      tryRules: CSSTryRule[];
+    }
+    /**
      * CSS keyframes rule representation.
      */
     export interface CSSKeyframesRule {
@@ -2403,6 +2522,10 @@ attributes) for a DOM node identified by `nodeId`.
        * A list of CSS keyframed animations matching this node.
        */
       cssKeyframesRules?: CSSKeyframesRule[];
+      /**
+       * A list of CSS position fallbacks matching this node.
+       */
+      cssPositionFallbackRules?: CSSPositionFallbackRule[];
       /**
        * Id of the first parent element that does not have display: contents.
        */
@@ -2705,6 +2828,10 @@ instrumentation).
        */
       storageKey: string;
       /**
+       * Storage bucket of the cache.
+       */
+      storageBucket?: Storage.StorageBucket;
+      /**
        * The name of the cache.
        */
       cacheName: string;
@@ -2755,7 +2882,7 @@ instrumentation).
      */
     export type requestCacheNamesParameters = {
       /**
-       * At least and at most one of securityOrigin, storageKey must be specified.
+       * At least and at most one of securityOrigin, storageKey, storageBucket must be specified.
 Security origin.
        */
       securityOrigin?: string;
@@ -2763,6 +2890,10 @@ Security origin.
        * Storage key.
        */
       storageKey?: string;
+      /**
+       * Storage bucket. If not specified, it uses the default bucket.
+       */
+      storageBucket?: Storage.StorageBucket;
     }
     export type requestCacheNamesReturnValue = {
       /**
@@ -5998,7 +6129,7 @@ requires the version number to be 'unsigned long long')
      */
     export type clearObjectStoreParameters = {
       /**
-       * At least and at most one of securityOrigin, storageKey must be specified.
+       * At least and at most one of securityOrigin, storageKey, or storageBucket must be specified.
 Security origin.
        */
       securityOrigin?: string;
@@ -6006,6 +6137,10 @@ Security origin.
        * Storage key.
        */
       storageKey?: string;
+      /**
+       * Storage bucket. If not specified, it uses the default bucket.
+       */
+      storageBucket?: Storage.StorageBucket;
       /**
        * Database name.
        */
@@ -6022,7 +6157,7 @@ Security origin.
      */
     export type deleteDatabaseParameters = {
       /**
-       * At least and at most one of securityOrigin, storageKey must be specified.
+       * At least and at most one of securityOrigin, storageKey, or storageBucket must be specified.
 Security origin.
        */
       securityOrigin?: string;
@@ -6030,6 +6165,10 @@ Security origin.
        * Storage key.
        */
       storageKey?: string;
+      /**
+       * Storage bucket. If not specified, it uses the default bucket.
+       */
+      storageBucket?: Storage.StorageBucket;
       /**
        * Database name.
        */
@@ -6042,7 +6181,7 @@ Security origin.
      */
     export type deleteObjectStoreEntriesParameters = {
       /**
-       * At least and at most one of securityOrigin, storageKey must be specified.
+       * At least and at most one of securityOrigin, storageKey, or storageBucket must be specified.
 Security origin.
        */
       securityOrigin?: string;
@@ -6050,6 +6189,10 @@ Security origin.
        * Storage key.
        */
       storageKey?: string;
+      /**
+       * Storage bucket. If not specified, it uses the default bucket.
+       */
+      storageBucket?: Storage.StorageBucket;
       databaseName: string;
       objectStoreName: string;
       /**
@@ -6078,7 +6221,7 @@ Security origin.
      */
     export type requestDataParameters = {
       /**
-       * At least and at most one of securityOrigin, storageKey must be specified.
+       * At least and at most one of securityOrigin, storageKey, or storageBucket must be specified.
 Security origin.
        */
       securityOrigin?: string;
@@ -6086,6 +6229,10 @@ Security origin.
        * Storage key.
        */
       storageKey?: string;
+      /**
+       * Storage bucket. If not specified, it uses the default bucket.
+       */
+      storageBucket?: Storage.StorageBucket;
       /**
        * Database name.
        */
@@ -6126,7 +6273,7 @@ Security origin.
      */
     export type getMetadataParameters = {
       /**
-       * At least and at most one of securityOrigin, storageKey must be specified.
+       * At least and at most one of securityOrigin, storageKey, or storageBucket must be specified.
 Security origin.
        */
       securityOrigin?: string;
@@ -6134,6 +6281,10 @@ Security origin.
        * Storage key.
        */
       storageKey?: string;
+      /**
+       * Storage bucket. If not specified, it uses the default bucket.
+       */
+      storageBucket?: Storage.StorageBucket;
       /**
        * Database name.
        */
@@ -6160,7 +6311,7 @@ is true.
      */
     export type requestDatabaseParameters = {
       /**
-       * At least and at most one of securityOrigin, storageKey must be specified.
+       * At least and at most one of securityOrigin, storageKey, or storageBucket must be specified.
 Security origin.
        */
       securityOrigin?: string;
@@ -6168,6 +6319,10 @@ Security origin.
        * Storage key.
        */
       storageKey?: string;
+      /**
+       * Storage bucket. If not specified, it uses the default bucket.
+       */
+      storageBucket?: Storage.StorageBucket;
       /**
        * Database name.
        */
@@ -6184,7 +6339,7 @@ Security origin.
      */
     export type requestDatabaseNamesParameters = {
       /**
-       * At least and at most one of securityOrigin, storageKey must be specified.
+       * At least and at most one of securityOrigin, storageKey, or storageBucket must be specified.
 Security origin.
        */
       securityOrigin?: string;
@@ -6192,6 +6347,10 @@ Security origin.
        * Storage key.
        */
       storageKey?: string;
+      /**
+       * Storage bucket. If not specified, it uses the default bucket.
+       */
+      storageBucket?: Storage.StorageBucket;
     }
     export type requestDatabaseNamesReturnValue = {
       /**
@@ -10387,7 +10546,7 @@ as an ad.
      * All Permissions Policy features. This enum should match the one defined
 in third_party/blink/renderer/core/permissions_policy/permissions_policy_features.json5.
      */
-    export type PermissionsPolicyFeature = "accelerometer"|"ambient-light-sensor"|"attribution-reporting"|"autoplay"|"bluetooth"|"browsing-topics"|"camera"|"ch-dpr"|"ch-device-memory"|"ch-downlink"|"ch-ect"|"ch-prefers-color-scheme"|"ch-prefers-reduced-motion"|"ch-rtt"|"ch-save-data"|"ch-ua"|"ch-ua-arch"|"ch-ua-bitness"|"ch-ua-platform"|"ch-ua-model"|"ch-ua-mobile"|"ch-ua-full"|"ch-ua-full-version"|"ch-ua-full-version-list"|"ch-ua-platform-version"|"ch-ua-reduced"|"ch-ua-wow64"|"ch-viewport-height"|"ch-viewport-width"|"ch-width"|"clipboard-read"|"clipboard-write"|"compute-pressure"|"cross-origin-isolated"|"direct-sockets"|"display-capture"|"document-domain"|"encrypted-media"|"execution-while-out-of-viewport"|"execution-while-not-rendered"|"focus-without-user-activation"|"fullscreen"|"frobulate"|"gamepad"|"geolocation"|"gyroscope"|"hid"|"identity-credentials-get"|"idle-detection"|"interest-cohort"|"join-ad-interest-group"|"keyboard-map"|"local-fonts"|"magnetometer"|"microphone"|"midi"|"otp-credentials"|"payment"|"picture-in-picture"|"private-aggregation"|"publickey-credentials-get"|"run-ad-auction"|"screen-wake-lock"|"serial"|"shared-autofill"|"shared-storage"|"shared-storage-select-url"|"smart-card"|"storage-access"|"sync-xhr"|"trust-token-redemption"|"unload"|"usb"|"vertical-scroll"|"web-share"|"window-management"|"window-placement"|"xr-spatial-tracking";
+    export type PermissionsPolicyFeature = "accelerometer"|"ambient-light-sensor"|"attribution-reporting"|"autoplay"|"bluetooth"|"browsing-topics"|"camera"|"ch-dpr"|"ch-device-memory"|"ch-downlink"|"ch-ect"|"ch-prefers-color-scheme"|"ch-prefers-reduced-motion"|"ch-rtt"|"ch-save-data"|"ch-ua"|"ch-ua-arch"|"ch-ua-bitness"|"ch-ua-platform"|"ch-ua-model"|"ch-ua-mobile"|"ch-ua-full"|"ch-ua-full-version"|"ch-ua-full-version-list"|"ch-ua-platform-version"|"ch-ua-reduced"|"ch-ua-wow64"|"ch-viewport-height"|"ch-viewport-width"|"ch-width"|"clipboard-read"|"clipboard-write"|"compute-pressure"|"cross-origin-isolated"|"direct-sockets"|"display-capture"|"document-domain"|"encrypted-media"|"execution-while-out-of-viewport"|"execution-while-not-rendered"|"focus-without-user-activation"|"fullscreen"|"frobulate"|"gamepad"|"geolocation"|"gyroscope"|"hid"|"identity-credentials-get"|"idle-detection"|"interest-cohort"|"join-ad-interest-group"|"keyboard-map"|"local-fonts"|"magnetometer"|"microphone"|"midi"|"otp-credentials"|"payment"|"picture-in-picture"|"private-aggregation"|"private-state-token-issuance"|"private-state-token-redemption"|"publickey-credentials-get"|"run-ad-auction"|"screen-wake-lock"|"serial"|"shared-autofill"|"shared-storage"|"shared-storage-select-url"|"smart-card"|"storage-access"|"sync-xhr"|"unload"|"usb"|"vertical-scroll"|"web-share"|"window-management"|"window-placement"|"xr-spatial-tracking";
     /**
      * Reason for a permissions policy feature to be disabled.
      */
@@ -10891,15 +11050,6 @@ dependent on the reason:
        */
       children: BackForwardCacheNotRestoredExplanationTree[];
     }
-    /**
-     * List of FinalStatus reasons for Prerender2.
-     */
-    export type PrerenderFinalStatus = "Activated"|"Destroyed"|"LowEndDevice"|"InvalidSchemeRedirect"|"InvalidSchemeNavigation"|"InProgressNavigation"|"NavigationRequestBlockedByCsp"|"MainFrameNavigation"|"MojoBinderPolicy"|"RendererProcessCrashed"|"RendererProcessKilled"|"Download"|"TriggerDestroyed"|"NavigationNotCommitted"|"NavigationBadHttpStatus"|"ClientCertRequested"|"NavigationRequestNetworkError"|"MaxNumOfRunningPrerendersExceeded"|"CancelAllHostsForTesting"|"DidFailLoad"|"Stop"|"SslCertificateError"|"LoginAuthRequested"|"UaChangeRequiresReload"|"BlockedByClient"|"AudioOutputDeviceRequested"|"MixedContent"|"TriggerBackgrounded"|"EmbedderTriggeredAndCrossOriginRedirected"|"MemoryLimitExceeded"|"FailToGetMemoryUsage"|"DataSaverEnabled"|"HasEffectiveUrl"|"ActivatedBeforeStarted"|"InactivePageRestriction"|"StartFailed"|"TimeoutBackgrounded"|"CrossSiteRedirect"|"CrossSiteNavigation"|"SameSiteCrossOriginRedirect"|"SameSiteCrossOriginNavigation"|"SameSiteCrossOriginRedirectNotOptIn"|"SameSiteCrossOriginNavigationNotOptIn"|"ActivationNavigationParameterMismatch"|"ActivatedInBackground"|"EmbedderHostDisallowed"|"ActivationNavigationDestroyedBeforeSuccess"|"TabClosedByUserGesture"|"TabClosedWithoutUserGesture"|"PrimaryMainFrameRendererProcessCrashed"|"PrimaryMainFrameRendererProcessKilled"|"ActivationFramePolicyNotCompatible"|"PreloadingDisabled"|"BatterySaverEnabled"|"ActivatedDuringMainFrameNavigation"|"PreloadingUnsupportedByWebContents";
-    /**
-     * Preloading status values, see also PreloadingTriggeringOutcome. This
-status is shared by prefetchStatusUpdated and prerenderStatusUpdated.
-     */
-    export type PreloadingStatus = "Pending"|"Running"|"Ready"|"Success"|"Failure"|"NotSupported";
     
     export type domContentEventFiredPayload = {
       timestamp: Network.MonotonicTime;
@@ -11171,46 +11321,6 @@ when bfcache navigation fails.
        * Tree structure of reasons why the page could not be cached for each frame.
        */
       notRestoredExplanationsTree?: BackForwardCacheNotRestoredExplanationTree;
-    }
-    /**
-     * Fired when a prerender attempt is completed.
-     */
-    export type prerenderAttemptCompletedPayload = {
-      /**
-       * The frame id of the frame initiating prerendering.
-       */
-      initiatingFrameId: FrameId;
-      prerenderingUrl: string;
-      finalStatus: PrerenderFinalStatus;
-      /**
-       * This is used to give users more information about the name of the API call
-that is incompatible with prerender and has caused the cancellation of the attempt
-       */
-      disallowedApiMethod?: string;
-    }
-    /**
-     * TODO(crbug/1384419): Create a dedicated domain for preloading.
-Fired when a prefetch attempt is updated.
-     */
-    export type prefetchStatusUpdatedPayload = {
-      /**
-       * The frame id of the frame initiating prefetch.
-       */
-      initiatingFrameId: FrameId;
-      prefetchUrl: string;
-      status: PreloadingStatus;
-    }
-    /**
-     * TODO(crbug/1384419): Create a dedicated domain for preloading.
-Fired when a prerender attempt is updated.
-     */
-    export type prerenderStatusUpdatedPayload = {
-      /**
-       * The frame id of the frame initiating prerender.
-       */
-      initiatingFrameId: FrameId;
-      prerenderingUrl: string;
-      status: PreloadingStatus;
     }
     export type loadEventFiredPayload = {
       timestamp: Network.MonotonicTime;
@@ -12832,7 +12942,7 @@ For cached script it is the last time the cache entry was validated.
     /**
      * Enum of possible storage types.
      */
-    export type StorageType = "appcache"|"cookies"|"file_systems"|"indexeddb"|"local_storage"|"shader_cache"|"websql"|"service_workers"|"cache_storage"|"interest_groups"|"shared_storage"|"all"|"other";
+    export type StorageType = "appcache"|"cookies"|"file_systems"|"indexeddb"|"local_storage"|"shader_cache"|"websql"|"service_workers"|"cache_storage"|"interest_groups"|"shared_storage"|"storage_buckets"|"all"|"other";
     /**
      * Usage for a storage type.
      */
@@ -12974,6 +13084,25 @@ SharedStorageAccessType.workletSet.
        */
       ignoreIfPresent?: boolean;
     }
+    export type StorageBucketsDurability = "relaxed"|"strict";
+    export interface StorageBucket {
+      storageKey: SerializedStorageKey;
+      /**
+       * If not specified, it is the default bucket of the storageKey.
+       */
+      name?: string;
+    }
+    export interface StorageBucketInfo {
+      bucket: StorageBucket;
+      id: string;
+      expiration: Network.TimeSinceEpoch;
+      /**
+       * Storage quota (bytes).
+       */
+      quota: number;
+      persistent: boolean;
+      durability: StorageBucketsDurability;
+    }
     
     /**
      * A cache's contents have been modified.
@@ -12987,6 +13116,10 @@ SharedStorageAccessType.workletSet.
        * Storage key to update.
        */
       storageKey: string;
+      /**
+       * Storage bucket to update.
+       */
+      bucketId: string;
       /**
        * Name of cache in origin.
        */
@@ -13004,6 +13137,10 @@ SharedStorageAccessType.workletSet.
        * Storage key to update.
        */
       storageKey: string;
+      /**
+       * Storage bucket to update.
+       */
+      bucketId: string;
     }
     /**
      * The origin's IndexedDB object store has been modified.
@@ -13017,6 +13154,10 @@ SharedStorageAccessType.workletSet.
        * Storage key to update.
        */
       storageKey: string;
+      /**
+       * Storage bucket to update.
+       */
+      bucketId: string;
       /**
        * Database to update.
        */
@@ -13038,6 +13179,10 @@ SharedStorageAccessType.workletSet.
        * Storage key to update.
        */
       storageKey: string;
+      /**
+       * Storage bucket to update.
+       */
+      bucketId: string;
     }
     /**
      * One of the interest groups was accessed by the associated page.
@@ -13074,6 +13219,12 @@ The following parameters are included in all events.
 presence/absence depends on `type`.
        */
       params: SharedStorageAccessParams;
+    }
+    export type storageBucketCreatedOrUpdatedPayload = {
+      bucketInfo: StorageBucketInfo;
+    }
+    export type storageBucketDeletedPayload = {
+      bucketId: string;
     }
     
     /**
@@ -13397,6 +13548,31 @@ Leaves other stored data, including the issuer's Redemption Records, intact.
       enable: boolean;
     }
     export type setSharedStorageTrackingReturnValue = {
+    }
+    /**
+     * Set tracking for a storage key's buckets.
+     */
+    export type setStorageBucketTrackingParameters = {
+      storageKey: string;
+      enable: boolean;
+    }
+    export type setStorageBucketTrackingReturnValue = {
+    }
+    /**
+     * Deletes the Storage Bucket with the given storage key and bucket name.
+     */
+    export type deleteStorageBucketParameters = {
+      bucket: StorageBucket;
+    }
+    export type deleteStorageBucketReturnValue = {
+    }
+    /**
+     * Deletes state for sites identified as potential bounce trackers, immediately.
+     */
+    export type runBounceTrackingMitigationsParameters = {
+    }
+    export type runBounceTrackingMitigationsReturnValue = {
+      deletedSites: string[];
     }
   }
   
@@ -15373,7 +15549,83 @@ See also:
 - https://github.com/WICG/nav-speculation/blob/main/triggers.md
        */
       sourceText: string;
+      /**
+       * A speculation rule set is either added through an inline
+<script> tag or through an external resource via the
+'Speculation-Rules' HTTP header. For the first case, we include
+the BackendNodeId of the relevant <script> tag. For the second
+case, we include the external URL where the rule set was loaded
+from, and also RequestId if Network domain is enabled.
+
+See also:
+- https://wicg.github.io/nav-speculation/speculation-rules.html#speculation-rules-script
+- https://wicg.github.io/nav-speculation/speculation-rules.html#speculation-rules-header
+       */
+      backendNodeId?: DOM.BackendNodeId;
+      url?: string;
+      requestId?: Network.RequestId;
+      /**
+       * Error information
+`errorMessage` is null iff `errorType` is null.
+       */
+      errorType?: RuleSetErrorType;
+      /**
+       * TODO(https://crbug.com/1425354): Replace this property with structured error.
+       */
+      errorMessage?: string;
     }
+    export type RuleSetErrorType = "SourceIsNotJsonObject"|"InvalidRulesSkipped";
+    /**
+     * The type of preloading attempted. It corresponds to
+mojom::SpeculationAction (although PrefetchWithSubresources is omitted as it
+isn't being used by clients).
+     */
+    export type SpeculationAction = "Prefetch"|"Prerender";
+    /**
+     * Corresponds to mojom::SpeculationTargetHint.
+See https://github.com/WICG/nav-speculation/blob/main/triggers.md#window-name-targeting-hints
+     */
+    export type SpeculationTargetHint = "Blank"|"Self";
+    /**
+     * A key that identifies a preloading attempt.
+
+The url used is the url specified by the trigger (i.e. the initial URL), and
+not the final url that is navigated to. For example, prerendering allows
+same-origin main frame navigations during the attempt, but the attempt is
+still keyed with the initial URL.
+     */
+    export interface PreloadingAttemptKey {
+      loaderId: Network.LoaderId;
+      action: SpeculationAction;
+      url: string;
+      targetHint?: SpeculationTargetHint;
+    }
+    /**
+     * Lists sources for a preloading attempt, specifically the ids of rule sets
+that had a speculation rule that triggered the attempt, and the
+BackendNodeIds of <a href> or <area href> elements that triggered the
+attempt (in the case of attempts triggered by a document rule). It is
+possible for mulitple rule sets and links to trigger a single attempt.
+     */
+    export interface PreloadingAttemptSource {
+      key: PreloadingAttemptKey;
+      ruleSetIds: RuleSetId[];
+      nodeIds: DOM.BackendNodeId[];
+    }
+    /**
+     * List of FinalStatus reasons for Prerender2.
+     */
+    export type PrerenderFinalStatus = "Activated"|"Destroyed"|"LowEndDevice"|"InvalidSchemeRedirect"|"InvalidSchemeNavigation"|"InProgressNavigation"|"NavigationRequestBlockedByCsp"|"MainFrameNavigation"|"MojoBinderPolicy"|"RendererProcessCrashed"|"RendererProcessKilled"|"Download"|"TriggerDestroyed"|"NavigationNotCommitted"|"NavigationBadHttpStatus"|"ClientCertRequested"|"NavigationRequestNetworkError"|"MaxNumOfRunningPrerendersExceeded"|"CancelAllHostsForTesting"|"DidFailLoad"|"Stop"|"SslCertificateError"|"LoginAuthRequested"|"UaChangeRequiresReload"|"BlockedByClient"|"AudioOutputDeviceRequested"|"MixedContent"|"TriggerBackgrounded"|"EmbedderTriggeredAndCrossOriginRedirected"|"MemoryLimitExceeded"|"FailToGetMemoryUsage"|"DataSaverEnabled"|"HasEffectiveUrl"|"ActivatedBeforeStarted"|"InactivePageRestriction"|"StartFailed"|"TimeoutBackgrounded"|"CrossSiteRedirectInInitialNavigation"|"CrossSiteNavigationInInitialNavigation"|"SameSiteCrossOriginRedirectNotOptInInInitialNavigation"|"SameSiteCrossOriginNavigationNotOptInInInitialNavigation"|"ActivationNavigationParameterMismatch"|"ActivatedInBackground"|"EmbedderHostDisallowed"|"ActivationNavigationDestroyedBeforeSuccess"|"TabClosedByUserGesture"|"TabClosedWithoutUserGesture"|"PrimaryMainFrameRendererProcessCrashed"|"PrimaryMainFrameRendererProcessKilled"|"ActivationFramePolicyNotCompatible"|"PreloadingDisabled"|"BatterySaverEnabled"|"ActivatedDuringMainFrameNavigation"|"PreloadingUnsupportedByWebContents"|"CrossSiteRedirectInMainFrameNavigation"|"CrossSiteNavigationInMainFrameNavigation"|"SameSiteCrossOriginRedirectNotOptInInMainFrameNavigation"|"SameSiteCrossOriginNavigationNotOptInInMainFrameNavigation"|"MemoryPressureOnTrigger"|"MemoryPressureAfterTriggered";
+    /**
+     * Preloading status values, see also PreloadingTriggeringOutcome. This
+status is shared by prefetchStatusUpdated and prerenderStatusUpdated.
+     */
+    export type PreloadingStatus = "Pending"|"Running"|"Ready"|"Success"|"Failure"|"NotSupported";
+    /**
+     * TODO(https://crbug.com/1384419): revisit the list of PrefetchStatus and
+filter out the ones that aren't necessary to the developers.
+     */
+    export type PrefetchStatus = "PrefetchAllowed"|"PrefetchFailedIneligibleRedirect"|"PrefetchFailedInvalidRedirect"|"PrefetchFailedMIMENotSupported"|"PrefetchFailedNetError"|"PrefetchFailedNon2XX"|"PrefetchFailedPerPageLimitExceeded"|"PrefetchEvicted"|"PrefetchHeldback"|"PrefetchIneligibleRetryAfter"|"PrefetchIsPrivacyDecoy"|"PrefetchIsStale"|"PrefetchNotEligibleBrowserContextOffTheRecord"|"PrefetchNotEligibleDataSaverEnabled"|"PrefetchNotEligibleExistingProxy"|"PrefetchNotEligibleHostIsNonUnique"|"PrefetchNotEligibleNonDefaultStoragePartition"|"PrefetchNotEligibleSameSiteCrossOriginPrefetchRequiredProxy"|"PrefetchNotEligibleSchemeIsNotHttps"|"PrefetchNotEligibleUserHasCookies"|"PrefetchNotEligibleUserHasServiceWorker"|"PrefetchNotEligibleBatterySaverEnabled"|"PrefetchNotEligiblePreloadingDisabled"|"PrefetchNotFinishedInTime"|"PrefetchNotStarted"|"PrefetchNotUsedCookiesChanged"|"PrefetchProxyNotAvailable"|"PrefetchResponseUsed"|"PrefetchSuccessfulButNotUsed"|"PrefetchNotUsedProbeFailed";
     
     /**
      * Upsert. Currently, it is only emitted when a rule set added.
@@ -15384,6 +15636,59 @@ See also:
     export type ruleSetRemovedPayload = {
       id: RuleSetId;
     }
+    /**
+     * Fired when a prerender attempt is completed.
+     */
+    export type prerenderAttemptCompletedPayload = {
+      key: PreloadingAttemptKey;
+      /**
+       * The frame id of the frame initiating prerendering.
+       */
+      initiatingFrameId: Page.FrameId;
+      prerenderingUrl: string;
+      finalStatus: PrerenderFinalStatus;
+      /**
+       * This is used to give users more information about the name of the API call
+that is incompatible with prerender and has caused the cancellation of the attempt
+       */
+      disallowedApiMethod?: string;
+    }
+    /**
+     * Fired when a preload enabled state is updated.
+     */
+    export type preloadEnabledStateUpdatedPayload = {
+      disabledByPreference: boolean;
+      disabledByDataSaver: boolean;
+      disabledByBatterySaver: boolean;
+    }
+    /**
+     * Fired when a prefetch attempt is updated.
+     */
+    export type prefetchStatusUpdatedPayload = {
+      key: PreloadingAttemptKey;
+      /**
+       * The frame id of the frame initiating prefetch.
+       */
+      initiatingFrameId: Page.FrameId;
+      prefetchUrl: string;
+      status: PreloadingStatus;
+      prefetchStatus: PrefetchStatus;
+    }
+    /**
+     * Fired when a prerender attempt is updated.
+     */
+    export type prerenderStatusUpdatedPayload = {
+      key: PreloadingAttemptKey;
+      status: PreloadingStatus;
+      prerenderStatus?: PrerenderFinalStatus;
+    }
+    /**
+     * Send a list of sources for all preloading attempts in a document.
+     */
+    export type preloadingAttemptSourcesUpdatedPayload = {
+      loaderId: Network.LoaderId;
+      preloadingAttemptSources: PreloadingAttemptSource[];
+    }
     
     export type enableParameters = {
     }
@@ -15392,6 +15697,86 @@ See also:
     export type disableParameters = {
     }
     export type disableReturnValue = {
+    }
+  }
+  
+  /**
+   * This domain allows interacting with the FedCM dialog.
+   */
+  export module FedCm {
+    /**
+     * Whether this is a sign-up or sign-in action for this account, i.e.
+whether this account has ever been used to sign in to this RP before.
+     */
+    export type LoginState = "SignIn"|"SignUp";
+    /**
+     * Whether the dialog shown is an account chooser or an auto re-authentication dialog.
+     */
+    export type DialogType = "AccountChooser"|"AutoReauthn";
+    /**
+     * Corresponds to IdentityRequestAccount
+     */
+    export interface Account {
+      accountId: string;
+      email: string;
+      name: string;
+      givenName: string;
+      pictureUrl: string;
+      idpConfigUrl: string;
+      idpSigninUrl: string;
+      loginState: LoginState;
+      /**
+       * These two are only set if the loginState is signUp
+       */
+      termsOfServiceUrl?: string;
+      privacyPolicyUrl?: string;
+    }
+    
+    export type dialogShownPayload = {
+      dialogId: string;
+      dialogType: DialogType;
+      accounts: Account[];
+      /**
+       * These exist primarily so that the caller can verify the
+RP context was used appropriately.
+       */
+      title: string;
+      subtitle?: string;
+    }
+    
+    export type enableParameters = {
+      /**
+       * Allows callers to disable the promise rejection delay that would
+normally happen, if this is unimportant to what's being tested.
+(step 4 of https://fedidcg.github.io/FedCM/#browser-api-rp-sign-in)
+       */
+      disableRejectionDelay?: boolean;
+    }
+    export type enableReturnValue = {
+    }
+    export type disableParameters = {
+    }
+    export type disableReturnValue = {
+    }
+    export type selectAccountParameters = {
+      dialogId: string;
+      accountIndex: number;
+    }
+    export type selectAccountReturnValue = {
+    }
+    export type dismissDialogParameters = {
+      dialogId: string;
+      triggerCooldown?: boolean;
+    }
+    export type dismissDialogReturnValue = {
+    }
+    /**
+     * Resets the cooldown time, if any, to allow the next FedCM call to show
+a dialog even if one was recently dismissed by the user.
+     */
+    export type resetCooldownParameters = {
+    }
+    export type resetCooldownReturnValue = {
     }
   }
   
@@ -15658,7 +16043,7 @@ variables as its properties.
       /**
        * Pause reason.
        */
-      reason: "ambiguous"|"assert"|"CSPViolation"|"debugCommand"|"DOM"|"EventListener"|"exception"|"instrumentation"|"OOM"|"other"|"promiseRejection"|"XHR";
+      reason: "ambiguous"|"assert"|"CSPViolation"|"debugCommand"|"DOM"|"EventListener"|"exception"|"instrumentation"|"OOM"|"other"|"promiseRejection"|"XHR"|"step";
       /**
        * Object containing break-specific auxiliary properties.
        */
@@ -15721,7 +16106,7 @@ variables as its properties.
        */
       hash: string;
       /**
-       * Embedder-specific auxiliary data.
+       * Embedder-specific auxiliary data likely matching {isDefault: boolean, type: 'default'|'isolated'|'worker', frameId: string}
        */
       executionContextAuxData?: { [key: string]: string };
       /**
@@ -15795,7 +16180,7 @@ scripts upon enabling debugger.
        */
       hash: string;
       /**
-       * Embedder-specific auxiliary data.
+       * Embedder-specific auxiliary data likely matching {isDefault: boolean, type: 'default'|'isolated'|'worker', frameId: string}
        */
       executionContextAuxData?: { [key: string]: string };
       /**
@@ -16953,13 +17338,29 @@ other objects in their object group.
      */
     export type ScriptId = string;
     /**
-     * Represents the value serialiazed by the WebDriver BiDi specification
-https://w3c.github.io/webdriver-bidi.
+     * Represents options for serialization. Overrides `generatePreview`, `returnByValue` and
+`generateWebDriverValue`.
      */
-    export interface WebDriverValue {
+    export interface SerializationOptions {
+      serialization: "deep"|"json"|"idOnly";
+      /**
+       * Deep serialization depth. Default is full depth. Respected only in `deep` serialization mode.
+       */
+      maxDepth?: number;
+    }
+    /**
+     * Represents deep serialized value.
+     */
+    export interface DeepSerializedValue {
       type: "undefined"|"null"|"string"|"number"|"boolean"|"bigint"|"regexp"|"date"|"symbol"|"array"|"object"|"function"|"map"|"set"|"weakmap"|"weakset"|"error"|"proxy"|"promise"|"typedarray"|"arraybuffer"|"node"|"window";
       value?: any;
       objectId?: string;
+      /**
+       * Set if value reference met more then once during serialization. In such
+case, value is provided only to one of the serialized values. Unique
+per value in the scope of one CDP call.
+       */
+      weakLocalObjectReference?: number;
     }
     /**
      * Unique object identifier.
@@ -17002,9 +17403,13 @@ property.
        */
       description?: string;
       /**
-       * WebDriver BiDi representation of the value.
+       * Deprecated. Use `deepSerializedValue` instead. WebDriver BiDi representation of the value.
        */
-      webDriverValue?: WebDriverValue;
+      webDriverValue?: DeepSerializedValue;
+      /**
+       * Deep serialized value.
+       */
+      deepSerializedValue?: DeepSerializedValue;
       /**
        * Unique object identifier (for non-primitive values).
        */
@@ -17220,7 +17625,7 @@ performs a cross-process navigation.
        */
       uniqueId: string;
       /**
-       * Embedder-specific auxiliary data.
+       * Embedder-specific auxiliary data likely matching {isDefault: boolean, type: 'default'|'isolated'|'worker', frameId: string}
        */
       auxData?: { [key: string]: string };
     }
@@ -17499,6 +17904,7 @@ execution. Overrides `setPauseOnException` state.
       silent?: boolean;
       /**
        * Whether the result is expected to be a JSON object which should be sent by value.
+Can be overriden by `serializationOptions`.
        */
       returnByValue?: boolean;
       /**
@@ -17538,11 +17944,17 @@ This is mutually exclusive with `executionContextId`.
        */
       uniqueContextId?: string;
       /**
-       * Whether the result should contain `webDriverValue`, serialized according to
+       * Deprecated. Use `serializationOptions: {serialization:"deep"}` instead.
+Whether the result should contain `webDriverValue`, serialized according to
 https://w3c.github.io/webdriver-bidi. This is mutually exclusive with `returnByValue`, but
 resulting `objectId` is still provided.
        */
       generateWebDriverValue?: boolean;
+      /**
+       * Specifies the result serialization. If provided, overrides
+`returnByValue` and `generateWebDriverValue`.
+       */
+      serializationOptions?: SerializationOptions;
     }
     export type callFunctionOnReturnValue = {
       /**
@@ -17691,9 +18103,18 @@ This is mutually exclusive with `contextId`.
        */
       uniqueContextId?: string;
       /**
-       * Whether the result should be serialized according to https://w3c.github.io/webdriver-bidi.
+       * Deprecated. Use `serializationOptions: {serialization:"deep"}` instead.
+Whether the result should contain `webDriverValue`, serialized
+according to
+https://w3c.github.io/webdriver-bidi. This is mutually exclusive with `returnByValue`, but
+resulting `objectId` is still provided.
        */
       generateWebDriverValue?: boolean;
+      /**
+       * Specifies the result serialization. If provided, overrides
+`returnByValue` and `generateWebDriverValue`.
+       */
+      serializationOptions?: SerializationOptions;
     }
     export type evaluateReturnValue = {
       /**
@@ -18105,9 +18526,6 @@ Error was thrown.
     "Page.javascriptDialogOpening": Page.javascriptDialogOpeningPayload;
     "Page.lifecycleEvent": Page.lifecycleEventPayload;
     "Page.backForwardCacheNotUsed": Page.backForwardCacheNotUsedPayload;
-    "Page.prerenderAttemptCompleted": Page.prerenderAttemptCompletedPayload;
-    "Page.prefetchStatusUpdated": Page.prefetchStatusUpdatedPayload;
-    "Page.prerenderStatusUpdated": Page.prerenderStatusUpdatedPayload;
     "Page.loadEventFired": Page.loadEventFiredPayload;
     "Page.navigatedWithinDocument": Page.navigatedWithinDocumentPayload;
     "Page.screencastFrame": Page.screencastFramePayload;
@@ -18128,6 +18546,8 @@ Error was thrown.
     "Storage.indexedDBListUpdated": Storage.indexedDBListUpdatedPayload;
     "Storage.interestGroupAccessed": Storage.interestGroupAccessedPayload;
     "Storage.sharedStorageAccessed": Storage.sharedStorageAccessedPayload;
+    "Storage.storageBucketCreatedOrUpdated": Storage.storageBucketCreatedOrUpdatedPayload;
+    "Storage.storageBucketDeleted": Storage.storageBucketDeletedPayload;
     "Target.attachedToTarget": Target.attachedToTargetPayload;
     "Target.detachedFromTarget": Target.detachedFromTargetPayload;
     "Target.receivedMessageFromTarget": Target.receivedMessageFromTargetPayload;
@@ -18164,6 +18584,12 @@ Error was thrown.
     "DeviceAccess.deviceRequestPrompted": DeviceAccess.deviceRequestPromptedPayload;
     "Preload.ruleSetUpdated": Preload.ruleSetUpdatedPayload;
     "Preload.ruleSetRemoved": Preload.ruleSetRemovedPayload;
+    "Preload.prerenderAttemptCompleted": Preload.prerenderAttemptCompletedPayload;
+    "Preload.preloadEnabledStateUpdated": Preload.preloadEnabledStateUpdatedPayload;
+    "Preload.prefetchStatusUpdated": Preload.prefetchStatusUpdatedPayload;
+    "Preload.prerenderStatusUpdated": Preload.prerenderStatusUpdatedPayload;
+    "Preload.preloadingAttemptSourcesUpdated": Preload.preloadingAttemptSourcesUpdatedPayload;
+    "FedCm.dialogShown": FedCm.dialogShownPayload;
     "Console.messageAdded": Console.messageAddedPayload;
     "Debugger.breakpointResolved": Debugger.breakpointResolvedPayload;
     "Debugger.paused": Debugger.pausedPayload;
@@ -18210,6 +18636,8 @@ Error was thrown.
     "Audits.disable": Audits.disableParameters;
     "Audits.enable": Audits.enableParameters;
     "Audits.checkContrast": Audits.checkContrastParameters;
+    "Audits.checkFormsIssues": Audits.checkFormsIssuesParameters;
+    "Autofill.trigger": Autofill.triggerParameters;
     "BackgroundService.startObserving": BackgroundService.startObservingParameters;
     "BackgroundService.stopObserving": BackgroundService.stopObservingParameters;
     "BackgroundService.setRecording": BackgroundService.setRecordingParameters;
@@ -18231,6 +18659,7 @@ Error was thrown.
     "Browser.setWindowBounds": Browser.setWindowBoundsParameters;
     "Browser.setDockTile": Browser.setDockTileParameters;
     "Browser.executeBrowserCommand": Browser.executeBrowserCommandParameters;
+    "Browser.addPrivacySandboxEnrollmentOverride": Browser.addPrivacySandboxEnrollmentOverrideParameters;
     "CSS.addRule": CSS.addRuleParameters;
     "CSS.collectClassNames": CSS.collectClassNamesParameters;
     "CSS.createStyleSheet": CSS.createStyleSheetParameters;
@@ -18601,6 +19030,9 @@ Error was thrown.
     "Storage.clearSharedStorageEntries": Storage.clearSharedStorageEntriesParameters;
     "Storage.resetSharedStorageBudget": Storage.resetSharedStorageBudgetParameters;
     "Storage.setSharedStorageTracking": Storage.setSharedStorageTrackingParameters;
+    "Storage.setStorageBucketTracking": Storage.setStorageBucketTrackingParameters;
+    "Storage.deleteStorageBucket": Storage.deleteStorageBucketParameters;
+    "Storage.runBounceTrackingMitigations": Storage.runBounceTrackingMitigationsParameters;
     "SystemInfo.getInfo": SystemInfo.getInfoParameters;
     "SystemInfo.getFeatureState": SystemInfo.getFeatureStateParameters;
     "SystemInfo.getProcessInfo": SystemInfo.getProcessInfoParameters;
@@ -18660,6 +19092,11 @@ Error was thrown.
     "DeviceAccess.cancelPrompt": DeviceAccess.cancelPromptParameters;
     "Preload.enable": Preload.enableParameters;
     "Preload.disable": Preload.disableParameters;
+    "FedCm.enable": FedCm.enableParameters;
+    "FedCm.disable": FedCm.disableParameters;
+    "FedCm.selectAccount": FedCm.selectAccountParameters;
+    "FedCm.dismissDialog": FedCm.dismissDialogParameters;
+    "FedCm.resetCooldown": FedCm.resetCooldownParameters;
     "Console.clearMessages": Console.clearMessagesParameters;
     "Console.disable": Console.disableParameters;
     "Console.enable": Console.enableParameters;
@@ -18764,6 +19201,8 @@ Error was thrown.
     "Audits.disable": Audits.disableReturnValue;
     "Audits.enable": Audits.enableReturnValue;
     "Audits.checkContrast": Audits.checkContrastReturnValue;
+    "Audits.checkFormsIssues": Audits.checkFormsIssuesReturnValue;
+    "Autofill.trigger": Autofill.triggerReturnValue;
     "BackgroundService.startObserving": BackgroundService.startObservingReturnValue;
     "BackgroundService.stopObserving": BackgroundService.stopObservingReturnValue;
     "BackgroundService.setRecording": BackgroundService.setRecordingReturnValue;
@@ -18785,6 +19224,7 @@ Error was thrown.
     "Browser.setWindowBounds": Browser.setWindowBoundsReturnValue;
     "Browser.setDockTile": Browser.setDockTileReturnValue;
     "Browser.executeBrowserCommand": Browser.executeBrowserCommandReturnValue;
+    "Browser.addPrivacySandboxEnrollmentOverride": Browser.addPrivacySandboxEnrollmentOverrideReturnValue;
     "CSS.addRule": CSS.addRuleReturnValue;
     "CSS.collectClassNames": CSS.collectClassNamesReturnValue;
     "CSS.createStyleSheet": CSS.createStyleSheetReturnValue;
@@ -19155,6 +19595,9 @@ Error was thrown.
     "Storage.clearSharedStorageEntries": Storage.clearSharedStorageEntriesReturnValue;
     "Storage.resetSharedStorageBudget": Storage.resetSharedStorageBudgetReturnValue;
     "Storage.setSharedStorageTracking": Storage.setSharedStorageTrackingReturnValue;
+    "Storage.setStorageBucketTracking": Storage.setStorageBucketTrackingReturnValue;
+    "Storage.deleteStorageBucket": Storage.deleteStorageBucketReturnValue;
+    "Storage.runBounceTrackingMitigations": Storage.runBounceTrackingMitigationsReturnValue;
     "SystemInfo.getInfo": SystemInfo.getInfoReturnValue;
     "SystemInfo.getFeatureState": SystemInfo.getFeatureStateReturnValue;
     "SystemInfo.getProcessInfo": SystemInfo.getProcessInfoReturnValue;
@@ -19214,6 +19657,11 @@ Error was thrown.
     "DeviceAccess.cancelPrompt": DeviceAccess.cancelPromptReturnValue;
     "Preload.enable": Preload.enableReturnValue;
     "Preload.disable": Preload.disableReturnValue;
+    "FedCm.enable": FedCm.enableReturnValue;
+    "FedCm.disable": FedCm.disableReturnValue;
+    "FedCm.selectAccount": FedCm.selectAccountReturnValue;
+    "FedCm.dismissDialog": FedCm.dismissDialogReturnValue;
+    "FedCm.resetCooldown": FedCm.resetCooldownReturnValue;
     "Console.clearMessages": Console.clearMessagesReturnValue;
     "Console.disable": Console.disableReturnValue;
     "Console.enable": Console.enableReturnValue;

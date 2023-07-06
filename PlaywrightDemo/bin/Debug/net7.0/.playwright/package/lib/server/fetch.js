@@ -89,12 +89,18 @@ class APIRequestContext extends _instrumentation.SdkObject {
         value
       } of params.headers) setHeader(headers, name, value);
     }
+    const requestUrl = new URL(params.url, defaults.baseURL);
+    if (params.params) {
+      for (const {
+        name,
+        value
+      } of params.params) requestUrl.searchParams.set(name, value);
+    }
     const method = ((_params$method = params.method) === null || _params$method === void 0 ? void 0 : _params$method.toUpperCase()) || 'GET';
     const proxy = defaults.proxy;
     let agent;
-    if (proxy && proxy.server !== 'per-context') {
+    if (proxy && proxy.server !== 'per-context' && !shouldBypassProxy(requestUrl, proxy.bypass)) {
       var _proxyOpts$protocol;
-      // TODO: support bypass proxy
       const proxyOpts = _url.default.parse(proxy.server);
       if ((_proxyOpts$protocol = proxyOpts.protocol) !== null && _proxyOpts$protocol !== void 0 && _proxyOpts$protocol.startsWith('socks')) {
         agent = new _utilsBundle.SocksProxyAgent({
@@ -119,13 +125,6 @@ class APIRequestContext extends _instrumentation.SdkObject {
     };
     // rejectUnauthorized = undefined is treated as true in node 12.
     if (params.ignoreHTTPSErrors || defaults.ignoreHTTPSErrors) options.rejectUnauthorized = false;
-    const requestUrl = new URL(params.url, defaults.baseURL);
-    if (params.params) {
-      for (const {
-        name,
-        value
-      } of params.params) requestUrl.searchParams.set(name, value);
-    }
     const postData = serializePostData(params, headers);
     if (postData) setHeader(headers, 'content-length', String(postData.byteLength));
     const controller = new _progress.ProgressController(metadata, this);
@@ -264,7 +263,7 @@ class APIRequestContext extends _instrumentation.SdkObject {
         }
         if (response.statusCode === 401 && !getHeader(options.headers, 'authorization')) {
           const auth = response.headers['www-authenticate'];
-          const credentials = this._defaultOptions().httpCredentials;
+          const credentials = this._getHttpCredentials(url);
           if (auth !== null && auth !== void 0 && auth.trim().startsWith('Basic') && credentials) {
             const {
               username,
@@ -308,7 +307,7 @@ class APIRequestContext extends _instrumentation.SdkObject {
           // Brotli and deflate decompressors throw if the input stream is empty.
           const emptyStreamTransform = new SafeEmptyStreamTransform(notifyBodyFinished);
           body = (0, _stream.pipeline)(response, emptyStreamTransform, transform, e => {
-            if (e) reject(new Error(`failed to decompress '${encoding}' encoding: ${e}`));
+            if (e) reject(new Error(`failed to decompress '${encoding}' encoding: ${e.message}`));
           });
           body.on('error', e => reject(new Error(`failed to decompress '${encoding}' encoding: ${e}`)));
         } else {
@@ -343,6 +342,11 @@ class APIRequestContext extends _instrumentation.SdkObject {
       if (postData) request.write(postData);
       request.end();
     });
+  }
+  _getHttpCredentials(url) {
+    var _this$_defaultOptions, _this$_defaultOptions2, _this$_defaultOptions3;
+    if (!((_this$_defaultOptions = this._defaultOptions().httpCredentials) !== null && _this$_defaultOptions !== void 0 && _this$_defaultOptions.origin) || url.origin.toLowerCase() === ((_this$_defaultOptions2 = this._defaultOptions().httpCredentials) === null || _this$_defaultOptions2 === void 0 ? void 0 : (_this$_defaultOptions3 = _this$_defaultOptions2.origin) === null || _this$_defaultOptions3 === void 0 ? void 0 : _this$_defaultOptions3.toLowerCase())) return this._defaultOptions().httpCredentials;
+    return undefined;
   }
 }
 exports.APIRequestContext = APIRequestContext;
@@ -584,4 +588,14 @@ function getHeader(headers, name) {
 }
 function removeHeader(headers, name) {
   delete headers[name];
+}
+function shouldBypassProxy(url, bypass) {
+  if (!bypass) return false;
+  const domains = bypass.split(',').map(s => {
+    s = s.trim();
+    if (!s.startsWith('.')) s = '.' + s;
+    return s;
+  });
+  const domain = '.' + url.hostname;
+  return domains.some(d => domain.endsWith(d));
 }

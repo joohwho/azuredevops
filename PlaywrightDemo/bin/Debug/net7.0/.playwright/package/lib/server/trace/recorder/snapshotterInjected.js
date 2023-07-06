@@ -80,6 +80,38 @@ function frameSnapshotStreamer(snapshotStreamer) {
         subtree: true
       };
       this._observer.observe(document, observerConfig);
+      this._refreshListenersWhenNeeded();
+    }
+    _refreshListenersWhenNeeded() {
+      this._refreshListeners();
+      const customEventName = '__playwright_snapshotter_global_listeners_check__';
+      let seenEvent = false;
+      const handleCustomEvent = () => seenEvent = true;
+      window.addEventListener(customEventName, handleCustomEvent);
+      const observer = new MutationObserver(entries => {
+        // Check for new documentElement in case we need to reinstall document listeners.
+        const newDocumentElement = entries.some(entry => Array.from(entry.addedNodes).includes(document.documentElement));
+        if (newDocumentElement) {
+          // New documentElement - let's check whether listeners are still here.
+          seenEvent = false;
+          window.dispatchEvent(new CustomEvent(customEventName));
+          if (!seenEvent) {
+            // Listener did not fire. Reattach the listener and notify.
+            window.addEventListener(customEventName, handleCustomEvent);
+            this._refreshListeners();
+          }
+        }
+      });
+      observer.observe(document, {
+        childList: true
+      });
+    }
+    _refreshListeners() {
+      document.addEventListener('__playwright_target__', event => {
+        if (!event.detail) return;
+        const callId = event.detail;
+        event.target.__playwright_target__ = callId;
+      });
     }
     _interceptNativeMethod(obj, method, cb) {
       const native = obj[method];
@@ -216,24 +248,6 @@ function frameSnapshotStreamer(snapshotStreamer) {
 
       // Ensure we are up to date.
       this._handleMutations(this._observer.takeRecords());
-
-      // Restore scroll positions for all ancestors of action target elements
-      // that will show the highlight/red dot in the trace viewer.
-      // Workaround for chromium regression:
-      // https://bugs.chromium.org/p/chromium/issues/detail?id=1324419
-      // https://github.com/microsoft/playwright/issues/14037
-      // TODO: remove after chromium is fixed?
-      const elementsToRestoreScrollPosition = new Set();
-      const findElementsToRestoreScrollPositionRecursively = element => {
-        let shouldAdd = element.hasAttribute(kTargetAttribute);
-        for (let child = element.firstElementChild; child; child = child.nextElementSibling) shouldAdd = shouldAdd || findElementsToRestoreScrollPositionRecursively(child);
-        if (element.shadowRoot) {
-          for (let child = element.shadowRoot.firstElementChild; child; child = child.nextElementSibling) shouldAdd = shouldAdd || findElementsToRestoreScrollPositionRecursively(child);
-        }
-        if (shouldAdd) elementsToRestoreScrollPosition.add(element);
-        return shouldAdd;
-      };
-      if (document.documentElement) findElementsToRestoreScrollPositionRecursively(document.documentElement);
       const definedCustomElements = new Set();
       const visitNode = node => {
         const nodeType = node.nodeType;
@@ -329,12 +343,12 @@ function frameSnapshotStreamer(snapshotStreamer) {
             expectValue(value);
             attrs[kSelectedAttribute] = value;
           }
-          if (elementsToRestoreScrollPosition.has(element) && element.scrollTop) {
+          if (element.scrollTop) {
             expectValue(kScrollTopAttribute);
             expectValue(element.scrollTop);
             attrs[kScrollTopAttribute] = '' + element.scrollTop;
           }
-          if (elementsToRestoreScrollPosition.has(element) && element.scrollLeft) {
+          if (element.scrollLeft) {
             expectValue(kScrollLeftAttribute);
             expectValue(element.scrollLeft);
             attrs[kScrollLeftAttribute] = '' + element.scrollLeft;
@@ -343,6 +357,11 @@ function frameSnapshotStreamer(snapshotStreamer) {
             ++shadowDomNesting;
             visitChild(element.shadowRoot);
             --shadowDomNesting;
+          }
+          if ('__playwright_target__' in element) {
+            expectValue(kTargetAttribute);
+            expectValue(element['__playwright_target__']);
+            attrs[kTargetAttribute] = element['__playwright_target__'];
           }
         }
         if (nodeName === 'HEAD') {

@@ -25,10 +25,10 @@ var _happyEyeballs = require("../utils/happy-eyeballs");
  */
 
 class WebSocketTransport {
-  static async connect(progress, url, headers, followRedirects) {
+  static async connect(progress, url, headers, followRedirects, debugLogHeader) {
     const logUrl = stripQueryParams(url);
     progress === null || progress === void 0 ? void 0 : progress.log(`<ws connecting> ${logUrl}`);
-    const transport = new WebSocketTransport(progress, url, logUrl, headers, followRedirects);
+    const transport = new WebSocketTransport(progress, url, logUrl, headers, followRedirects, debugLogHeader);
     let success = false;
     progress === null || progress === void 0 ? void 0 : progress.cleanupWhenAborted(async () => {
       if (!success) await transport.closeAndWait().catch(e => null);
@@ -44,6 +44,9 @@ class WebSocketTransport {
         transport._ws.close();
       });
       transport._ws.on('unexpected-response', (request, response) => {
+        for (let i = 0; i < response.rawHeaders.length; i += 2) {
+          if (debugLogHeader && response.rawHeaders[i] === debugLogHeader) progress === null || progress === void 0 ? void 0 : progress.log(response.rawHeaders[i + 1]);
+        }
         const chunks = [];
         const errorPrefix = `${logUrl} ${response.statusCode} ${response.statusMessage}`;
         response.on('data', chunk => chunks.push(chunk));
@@ -58,7 +61,7 @@ class WebSocketTransport {
     success = true;
     return transport;
   }
-  constructor(progress, url, logUrl, headers, followRedirects) {
+  constructor(progress, url, logUrl, headers, followRedirects, debugLogHeader) {
     var _progress$timeUntilDe;
     this._ws = void 0;
     this._progress = void 0;
@@ -66,6 +69,7 @@ class WebSocketTransport {
     this.onmessage = void 0;
     this.onclose = void 0;
     this.wsEndpoint = void 0;
+    this.headers = [];
     this.wsEndpoint = url;
     this._logUrl = logUrl;
     this._ws = new _utilsBundle.ws(url, [], {
@@ -77,6 +81,15 @@ class WebSocketTransport {
       headers,
       followRedirects,
       agent: /^(https|wss):\/\//.test(url) ? _happyEyeballs.httpsHappyEyeballsAgent : _happyEyeballs.httpHappyEyeballsAgent
+    });
+    this._ws.on('upgrade', response => {
+      for (let i = 0; i < response.rawHeaders.length; i += 2) {
+        this.headers.push({
+          name: response.rawHeaders[i],
+          value: response.rawHeaders[i + 1]
+        });
+        if (debugLogHeader && response.rawHeaders[i] === debugLogHeader) progress === null || progress === void 0 ? void 0 : progress.log(response.rawHeaders[i + 1]);
+      }
     });
     this._progress = progress;
     // The 'ws' module in node sometimes sends us multiple messages in a single task.
