@@ -13,7 +13,7 @@ public class Tests
     public async Task Test1()
     {
         // Playwright
-        //using var playwright = await Playwright.CreateAsync();
+        using var playwright = await Playwright.CreateAsync();
 
         // Browser
         await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
