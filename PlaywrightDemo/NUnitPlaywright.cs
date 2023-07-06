@@ -1,45 +1,34 @@
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
+using PlaywrightDemo.Pages;
 
 namespace PlaywrightDemo;
 
-public class NUnitPlaywright : PageTest
+public class NUnitPlaywright
 {
     [SetUp]
     public async Task Setup()
     {
-        await Page.GotoAsync("http://www.eaapp.somee.com");
+        
     }
 
     [Test]
     public async Task Test1()
     {
-        await Page.ClickAsync("text='Login'");
-
-        await Page.ScreenshotAsync(new PageScreenshotOptions
+        using var playwright = await Playwright.CreateAsync();
+        await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
         {
-            Path = "eaapp1.jpg"
+            Headless = false
         });
+        var page = await browser.NewPageAsync();
 
-        await Page.FillAsync("#UserName", "admin");
-        await Page.ScreenshotAsync(new PageScreenshotOptions
-        {
-            Path = "eaapp2.jpg"
-        });
+        await page.GotoAsync("http://www.eaapp.somee.com");
 
-        await Page.FillAsync("#Password", "password");
-        await Page.ScreenshotAsync(new PageScreenshotOptions
-        {
-            Path = "eaapp3.jpg"
-        });
+        LoginPage loginPage = new LoginPage(page);
+        await loginPage.ClickLogin();
+        await loginPage.Login("admin", "password");
+        bool isExist = await loginPage.IsEmployeeDetailsExists();
 
-        await Page.ClickAsync("text='Log in'");
-        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await Page.ScreenshotAsync(new PageScreenshotOptions
-        {
-            Path = "eaapp4.jpg"
-        });
-
-        await Expect(Page.Locator("text=Employee Details")).ToBeVisibleAsync();
+        Assert.IsTrue(isExist);
     }
 }
