@@ -37,7 +37,7 @@ public class NUnitPlaywright : PageTest
         await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await Page.ScreenshotAsync(new PageScreenshotOptions
         {
-            Path = "eaapp3.jpg"
+            Path = "eaapp4.jpg"
         });
 
         await Expect(Page.Locator("text=Employee Details")).ToBeVisibleAsync();
