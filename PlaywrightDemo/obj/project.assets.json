@@ -1,7 +1,7 @@
 {
   "version": 3,
   "targets": {
-    "net7.0": {
+    "net7.0.304": {
       "coverlet.collector/3.2.0": {
         "type": "package",
         "build": {
@@ -1668,7 +1668,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net7.0": [
+    "net7.0.304": [
       "Microsoft.NET.Test.Sdk >= 17.5.0",
       "Microsoft.Playwright.NUnit >= 1.35.0",
       "NUnit >= 3.13.3",
@@ -1699,7 +1699,7 @@
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
-        "net7.0"
+        "net7.0.304"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
@@ -1708,8 +1708,8 @@
         "https://brdevops.flex.com/Projects/_packaging/SIT/nuget/v3/index.json": {}
       },
       "frameworks": {
-        "net7.0": {
-          "targetAlias": "net7.0",
+        "net7.0.304": {
+          "targetAlias": "net7.0.304",
           "projectReferences": {}
         }
       },
@@ -1720,8 +1720,8 @@
       }
     },
     "frameworks": {
-      "net7.0": {
-        "targetAlias": "net7.0",
+      "net7.0.304": {
+        "targetAlias": "net7.0.304",
         "dependencies": {
           "Microsoft.NET.Test.Sdk": {
             "target": "Package",
