@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\PlaywrightDemo.csproj": {}
+    "C:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\PlaywrightDemo.csproj": {}
   },
   "projects": {
-    "c:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\PlaywrightDemo.csproj": {
+    "C:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\PlaywrightDemo.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\PlaywrightDemo.csproj",
+        "projectUniqueName": "C:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\PlaywrightDemo.csproj",
         "projectName": "PlaywrightDemo",
-        "projectPath": "c:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\PlaywrightDemo.csproj",
+        "projectPath": "C:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\PlaywrightDemo.csproj",
         "packagesPath": "C:\\Users\\saojonol\\.nuget\\packages\\",
-        "outputPath": "c:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\obj\\",
+        "outputPath": "C:\\SupplyChain\\playwrightdotnet\\PlaywrightDemo\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
