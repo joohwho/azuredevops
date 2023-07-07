@@ -39,7 +39,7 @@ steps:
     dir $(Build.SourcesDirectory)\PlaywrightDemo\bin\
   displayName: 'List files in directory'
 
-- script: pwsh $(Build.SourcesDirectory)\PlaywrightDemo\bin\Release\net7.0\playwright.ps1 install
+- script: pwsh $(Build.SourcesDirectory)\PlaywrightDemo\bin\Release\net7.0\playwright.ps1 install-deps chromium
   displayName: 'Install Playwright browsers'
 
 - script: dotnet test $(solution)
