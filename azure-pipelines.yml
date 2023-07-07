@@ -10,8 +10,8 @@ pool:
 variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  solution: '$(Build.SourcesDirectory)\PlaywrightDemo\*.sln'
-  projects: '$(Build.SourcesDirectory)\PlaywrightDemo\*.csproj'
+  solution: '$(Build.SourcesDirectory)\PlaywrightDemo\PlaywrightDemo.sln'
+  projects: '$(Build.SourcesDirectory)\PlaywrightDemo\PlaywrightDemo.csproj'
 
 steps:
 - task: NuGetToolInstaller@1
@@ -32,16 +32,20 @@ steps:
     packageType: sdk
     version: '7.0.x'
 
-- script: dotnet build --configuration $(buildConfiguration) $(solution)
-  displayName: 'Build'
-
-- script: |
-    dir $(Build.SourcesDirectory)\PlaywrightDemo\bin\
-  displayName: 'List files in directory'
+- task: VSBuild@1
+  displayName: 'Build solution'
+  inputs:
+    solution: '$(solution)'
+    msbuildArgs: '/p:Configuration=$(buildConfiguration)'
 
 - script: pwsh $(Build.SourcesDirectory)\PlaywrightDemo\bin\Release\net7.0\playwright.ps1 install
   displayName: 'Install Playwright browsers'
 
-- script: dotnet test $(solution)
+- task: VSTest@2
   displayName: 'Run tests'
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      $(Build.SourcesDirectory)\PlaywrightDemo\bin\$(buildConfiguration)\**\*Test*.dll
+    searchFolder: '$(System.DefaultWorkingDirectory)'
 
