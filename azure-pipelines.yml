@@ -35,7 +35,7 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration) $(solution)
   displayName: 'Build'
 
-- script: pwsh $(Build.Repository.LocalPath)\bin\Debug\net7.0\playwright.ps1 install
+- script: pwsh $(Build.SourcesDirectory)\bin\Debug\net7.0\playwright.ps1 install
   displayName: 'Install Playwright browsers'
 
 - script: dotnet test ---configuration $(buildConfiguration) $(solution)
