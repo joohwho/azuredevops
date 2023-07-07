@@ -1,8 +1,16 @@
 trigger:
-- develop
+  branches:
+    include:
+    - develop
+    - master
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
 
 steps:
 - task: UseDotNet@2
@@ -11,8 +19,12 @@ steps:
     version: '7.0.x'
   displayName: 'Use .NET SDK'
 
-- script: dotnet build --configuration Release
-  displayName: 'Build'
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
 - script: pwsh bin/Debug/net7.0/playwright.ps1 install --with-deps
   displayName: 'Install Playwright browsers'
 - script: dotnet test --configuration Release
