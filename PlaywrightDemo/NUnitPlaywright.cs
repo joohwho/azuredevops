@@ -15,7 +15,7 @@ public class NUnitPlaywright
     [Test]
     public async Task Test1()
     {
-        //using var playwright = await Playwright.CreateAsync();
+        using var playwright = await Playwright.CreateAsync();
         await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
         {
             Headless = false
