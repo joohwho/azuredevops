@@ -35,9 +35,9 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration) $(solution)
   displayName: 'Build'
 
-- script: pwsh PlaywrightDemo/bin/Debug/net7.0/playwright.ps1 install --with-deps
+- script: pwsh PlaywrightDemo/bin/Debug/net7.0/playwright.ps1 install
   displayName: 'Install Playwright browsers'
 
-- script: dotnet test --configuration Release
+- script: dotnet test ---configuration $(buildConfiguration) $(solution)
   displayName: 'Run tests'
 
