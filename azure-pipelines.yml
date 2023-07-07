@@ -19,11 +19,12 @@ steps:
     version: '7.0.x'
   displayName: 'Use .NET SDK'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
+  displayName: Build
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: build
+    projects: '**/*.csproj'
+    arguments: '--configuration --configuration Release'
 
 - script: pwsh bin/Debug/net7.0/playwright.ps1 install --with-deps
   displayName: 'Install Playwright browsers'
