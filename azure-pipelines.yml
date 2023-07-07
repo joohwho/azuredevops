@@ -32,7 +32,7 @@ steps:
     packageType: sdk
     version: '7.0.x'
 
-- script: dotnet build --configuration $(buildConfiguration) $(projects)
+- script: dotnet build --projects $(projects) --configuration $(buildConfiguration)
   displayName: 'Build'
 
 - script: pwsh bin/Debug/net7.0/playwright.ps1 install --with-deps
