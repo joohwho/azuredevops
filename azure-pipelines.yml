@@ -31,7 +31,7 @@ steps:
   inputs:
     packageType: sdk
     version: '7.0.x'
-- script: dotnet build --projects $(solution) --configuration $(buildConfiguration)
+- script: dotnet build --projects $(projects) --configuration $(buildConfiguration)
   displayName: 'Build'
 - script: pwsh bin/Debug/net7.0/playwright.ps1 install --with-deps
   displayName: 'Install Playwright browsers'
