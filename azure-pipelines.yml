@@ -10,8 +10,8 @@ pool:
 variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  solution: 'PlaywrightDemo/PlaywrightDemo.sln'
-  projects: 'PlaywrightDemo/PlaywrightDemo.csproj'
+  solution: '$(Build.SourcesDirectory)\PlaywrightDemo\PlaywrightDemo.sln'
+  projects: '$(Build.SourcesDirectory)\PlaywrightDemo\PlaywrightDemo.csproj'
 
 steps:
 - task: NuGetToolInstaller@1
