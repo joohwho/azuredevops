@@ -32,10 +32,10 @@ steps:
     packageType: sdk
     version: '7.0.x'
 
-- script: dotnet build --projects $(projects) --configuration $(buildConfiguration)
+- script: dotnet build --configuration $(buildConfiguration) $(solution)
   displayName: 'Build'
 
-- script: pwsh bin/Debug/net7.0/playwright.ps1 install --with-deps
+- script: pwsh PlaywrightDemo/bin/Debug/net7.0/playwright.ps1 install --with-deps
   displayName: 'Install Playwright browsers'
 
 - script: dotnet test --configuration Release
