@@ -11,8 +11,6 @@ steps:
     version: '7.0.x'
   displayName: 'Use .NET SDK'
   
-- script: dotnet build --configuration Release
-  displayName: 'Build'
 - script: pwsh bin/Debug/net7.0/playwright.ps1 install --with-deps
   displayName: 'Install Playwright browsers'
 - script: dotnet test --configuration Release
