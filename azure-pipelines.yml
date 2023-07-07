@@ -36,10 +36,10 @@ steps:
   displayName: 'Build'
 
 - script: |
-    dir $(Build.SourcesDirectory)\PlaywrightDemo\bin\Debug\net7.0\
+    dir $(Build.SourcesDirectory)\PlaywrightDemo\bin\Release\net7.0\
   displayName: 'List files in directory'
 
-- script: pwsh $(Build.SourcesDirectory)\PlaywrightDemo\bin\Debug\net7.0\playwright.ps1 install
+- script: pwsh $(Build.SourcesDirectory)\PlaywrightDemo\bin\Release\net7.0\playwright.ps1 install
   displayName: 'Install Playwright browsers'
 
 - script: dotnet test ---configuration $(buildConfiguration) $(solution)
