@@ -32,20 +32,12 @@ steps:
     packageType: sdk
     version: '7.0.x'
 
-- task: VSBuild@1
-  displayName: 'Build solution'
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:Configuration=$(buildConfiguration)'
+- script: dotnet build --configuration $(buildConfiguration) $(solution)
+  displayName: 'Build'
 
 - script: pwsh $(Build.SourcesDirectory)\PlaywrightDemo\bin\Release\net7.0\playwright.ps1 install
   displayName: 'Install Playwright browsers'
 
-- task: VSTest@2
+- script: dotnet test $(solution)
   displayName: 'Run tests'
-  inputs:
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      $(Build.SourcesDirectory)\PlaywrightDemo\bin\$(buildConfiguration)\**\*Test*.dll
-    searchFolder: '$(System.DefaultWorkingDirectory)'
 
