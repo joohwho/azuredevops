@@ -35,12 +35,9 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration) $(solution)
   displayName: 'Build'
 
-- task: PowerShell@2
-  displayName: 'Check PowerShell version'
-  inputs:
-    targetType: 'inline'
-    script: |
-      $PSVersionTable.PSVersion
+- script: |
+    dir $(Build.SourcesDirectory)\PlaywrightDemo\bin\Debug\net7.0\
+  displayName: 'List files in directory'
 
 - script: pwsh $(Build.SourcesDirectory)\PlaywrightDemo\bin\Debug\net7.0\playwright.ps1 install
   displayName: 'Install Playwright browsers'
